@@ -1,6 +1,10 @@
 package base
 
+import "net"
+
 type Connection interface {
+	Address() net.Addr
+
 	GetState() PacketState
 	SetState(state PacketState)
 

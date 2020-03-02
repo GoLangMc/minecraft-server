@@ -33,6 +33,10 @@ func NewConnection(conn *net.TCPConn) base.Connection {
 	}
 }
 
+func (c *connection) Address() net.Addr {
+	return c.tcp.RemoteAddr()
+}
+
 func (c *connection) GetState() base.PacketState {
 	return c.state
 }
