@@ -81,7 +81,7 @@ func (n *network) startListening() error {
 }
 
 func handleConnect(network *network, conn base.Connection) {
-	// network.logger.Data("New Connection from &6%v", conn.TCP.RemoteAddr())
+	network.logger.DataF("New Connection from &6%v", conn.Address())
 
 	var inf []byte
 
@@ -140,11 +140,9 @@ func handleConnect(network *network, conn base.Connection) {
 func handleReceive(network *network, conn base.Connection, bufI base.Buffer, bufO base.Buffer) {
 	uuid := bufI.PullVrI()
 
-	network.logger.InfoF("UUID: %d", uuid)
-
 	packetI := network.packets.GetPacketI(uuid, conn.GetState())
 	if packetI == nil {
-		network.logger.WarnF("unable to decode %v packet with uuid: %d", conn.GetState(), uuid)
+		network.logger.DataF("unable to decode %v packet with uuid: %d", conn.GetState(), uuid)
 		return
 	}
 
