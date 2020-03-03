@@ -70,6 +70,7 @@ func NewServer(host string, port int) apis.Server {
 }
 
 func (s *server) Load() {
+	apis.SetMinecraftServer(s)
 
 	s.console.Load()
 	s.command.Load()
