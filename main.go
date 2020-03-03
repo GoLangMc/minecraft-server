@@ -6,26 +6,34 @@ import (
 	"github.com/fatih/color"
 
 	"minecraft-server/impl"
+	"minecraft-server/impl/conf"
 )
 
 func main() {
 	color.NoColor = false
 
-	var host string
-	var port int
-
-	parseParams(&host, &port)
-
-	server := impl.NewServer(host, port)
+	server := impl.NewServer(MergeWithFlags(conf.DefaultServerConfig))
 	server.Load()
 }
 
-func parseParams(host *string, port *int) {
-	tempHost := flag.String("host", "0.0.0.0", "the address this server will bind to")
-	tempPort := flag.Int("port", 25565, "the port this server will bind to")
+func MergeWithFlags(c conf.ServerConfig) conf.ServerConfig {
+	host := flag.String("host",
+		conf.DefaultServerConfig.Network.Host,
+		"the address this server will bind to")
+
+	port := flag.Int("port",
+		conf.DefaultServerConfig.Network.Port,
+		"the port this server will bind to")
 
 	flag.Parse()
 
-	*host = *tempHost
-	*port = *tempPort
+	if *host != conf.DefaultServerConfig.Network.Host {
+		c.Network.Host = *host
+	}
+
+	if *port != conf.DefaultServerConfig.Network.Port {
+		c.Network.Port = *port
+	}
+
+	return c
 }

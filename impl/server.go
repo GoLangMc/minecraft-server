@@ -13,6 +13,7 @@ import (
 	"minecraft-server/apis/logs"
 	"minecraft-server/apis/task"
 	"minecraft-server/apis/util"
+	"minecraft-server/impl/conf"
 
 	"minecraft-server/impl/conn"
 	"minecraft-server/impl/cons"
@@ -38,7 +39,7 @@ type server struct {
 	packets impl_base.Packets
 }
 
-func NewServer(host string, port int) apis.Server {
+func NewServer(conf conf.ServerConfig) apis.Server {
 	message := make(chan system.Message)
 
 	console := cons.NewConsole(message)
@@ -50,7 +51,7 @@ func NewServer(host string, port int) apis.Server {
 	quit := make(chan impl_base.PlayerAndConnection)
 
 	packets := prot.NewPackets(join, quit)
-	network := conn.NewNetwork(host, port, packets, join, quit)
+	network := conn.NewNetwork(conf.Network.Host, conf.Network.Port, packets, join, quit)
 
 	command := cmds.NewCommandManager()
 
