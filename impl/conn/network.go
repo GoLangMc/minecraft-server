@@ -8,7 +8,7 @@ import (
 
 	"minecraft-server/apis/logs"
 	"minecraft-server/impl/base"
-	"minecraft-server/impl/data/server"
+	"minecraft-server/impl/data/system"
 )
 
 type network struct {
@@ -21,7 +21,7 @@ type network struct {
 	join chan base.PlayerAndConnection
 	quit chan base.PlayerAndConnection
 
-	report chan server.Message
+	report chan system.Message
 }
 
 func NewNetwork(host string, port int, packet base.Packets, join chan base.PlayerAndConnection, quit chan base.PlayerAndConnection) base.Network {
@@ -39,7 +39,7 @@ func NewNetwork(host string, port int, packet base.Packets, join chan base.Playe
 
 func (n *network) Load() {
 	if err := n.startListening(); err != nil {
-		n.report <- server.Make(server.FAIL, err)
+		n.report <- system.Make(system.FAIL, err)
 		return
 	}
 }
@@ -66,7 +66,7 @@ func (n *network) startListening() error {
 			con, err := tcp.AcceptTCP()
 
 			if err != nil {
-				n.report <- server.Make(server.FAIL, err)
+				n.report <- system.Make(system.FAIL, err)
 				break
 			}
 

@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"minecraft-server/apis"
 	"minecraft-server/apis/cmds"
 	"minecraft-server/apis/data"
 	"minecraft-server/apis/ents"
@@ -15,68 +16,68 @@ import (
 
 	"minecraft-server/impl/conn"
 	"minecraft-server/impl/cons"
-	"minecraft-server/impl/data/server"
+	"minecraft-server/impl/data/system"
 	"minecraft-server/impl/data/values"
 	"minecraft-server/impl/prot"
 
-	apis "minecraft-server/apis/base"
-	impl "minecraft-server/impl/base"
+	apis_base "minecraft-server/apis/base"
+	impl_base "minecraft-server/impl/base"
 )
 
-type Server struct {
-	message chan server.Message
+type server struct {
+	message chan system.Message
 
-	Console *cons.Console
-	Logging *logs.Logging
+	console *cons.Console
+	logging *logs.Logging
 
-	Tasking *task.Tasking
+	tasking *task.Tasking
 
-	Command *cmds.CommandManager
+	command *cmds.CommandManager
 
-	Network impl.Network
-	Packets impl.Packets
+	network impl_base.Network
+	packets impl_base.Packets
 }
 
-func NewServer(host string, port int) *Server {
-	message := make(chan server.Message)
+func NewServer(host string, port int) apis.Server {
+	message := make(chan system.Message)
 
 	console := cons.NewConsole(message)
 	logging := logs.NewLogging("server", logs.EveryLevel...)
 
 	tasking := task.NewTasking(values.MPT)
 
-	join := make(chan impl.PlayerAndConnection)
-	quit := make(chan impl.PlayerAndConnection)
+	join := make(chan impl_base.PlayerAndConnection)
+	quit := make(chan impl_base.PlayerAndConnection)
 
 	packets := prot.NewPackets(join, quit)
 	network := conn.NewNetwork(host, port, packets, join, quit)
 
 	command := cmds.NewCommandManager()
 
-	return &Server{
+	return &server{
 		message: message,
 
-		Console: console,
+		console: console,
 
-		Logging: logging,
-		Tasking: tasking,
+		logging: logging,
+		tasking: tasking,
 
-		Command: command,
+		command: command,
 
-		Packets: packets,
-		Network: network,
+		packets: packets,
+		network: network,
 	}
 }
 
-func (s *Server) Load() {
+func (s *server) Load() {
 
-	s.Console.Load()
-	s.Command.Load()
-	s.Tasking.Load()
-	s.Network.Load()
+	s.console.Load()
+	s.command.Load()
+	s.tasking.Load()
+	s.network.Load()
 
-	s.Command.Register("stop", s.stopServerCommand)
-	s.Command.Register("time", func(sender ents.Sender, params []string) {
+	s.command.Register("stop", s.stopServerCommand)
+	s.command.Register("time", func(sender ents.Sender, params []string) {
 		var seconds int64 = 0
 
 		if len(params) > 0 {
@@ -99,7 +100,7 @@ func (s *Server) Load() {
 	go func() {
 		for {
 			// read input from console
-			text := strings.Trim(<-s.Console.IChannel, " ")
+			text := strings.Trim(<-s.console.IChannel, " ")
 			if len(text) == 0 {
 				continue
 			}
@@ -109,14 +110,14 @@ func (s *Server) Load() {
 				continue
 			}
 
-			if command := s.Command.Search(args[0]); command != nil {
+			if command := s.command.Search(args[0]); command != nil {
 
-				err := apis.Attempt(func() {
-					(*command).Evaluate(s.Console, args[1:])
+				err := apis_base.Attempt(func() {
+					(*command).Evaluate(s.console, args[1:])
 				})
 
 				if err != nil {
-					s.Logging.Fail(
+					s.logging.Fail(
 						data.Red, "failed to evaluate ",
 						data.DarkGray, "`",
 						data.White, (*command).Name(),
@@ -127,36 +128,36 @@ func (s *Server) Load() {
 				continue
 			}
 
-			s.Console.SendMessage(text)
+			s.console.SendMessage(text)
 		}
 	}()
 
 	s.Wait()
 }
 
-func (s *Server) Kill() {
+func (s *server) Kill() {
 
-	s.Console.Kill()
-	s.Command.Kill()
-	s.Tasking.Kill()
-	s.Network.Kill()
+	s.console.Kill()
+	s.command.Kill()
+	s.tasking.Kill()
+	s.network.Kill()
 
 	// push the stop message to the server exit channel
-	s.message <- server.Make(server.STOP, "normal stop")
+	s.message <- system.Make(system.STOP, "normal stop")
 	close(s.message)
 
-	s.Logging.Info(data.DarkRed, "server stopped")
+	s.logging.Info(data.DarkRed, "server stopped")
 }
 
-func (s *Server) Wait() {
+func (s *server) Wait() {
 	// select over server commands channel
 	select {
 	case command := <-s.message:
 		switch command.Command {
 		// stop selecting when stop is received
-		case server.STOP:
+		case system.STOP:
 			return
-		case server.FAIL:
+		case system.FAIL:
 			fmt.Printf("internal server error: %s\n", command.Message)
 			return
 		}
@@ -165,9 +166,21 @@ func (s *Server) Wait() {
 	s.Wait()
 }
 
-func (s *Server) stopServerCommand(sender ents.Sender, params []string) {
+func (s *server) Logging() *logs.Logging {
+	return s.logging
+}
+
+func (s *server) Command() *cmds.CommandManager {
+	return s.command
+}
+
+func (s *server) Tasking() *task.Tasking {
+	return s.tasking
+}
+
+func (s *server) stopServerCommand(sender ents.Sender, params []string) {
 	if _, ok := sender.(*cons.Console); !ok {
-		s.Logging.FailF("non console sender %s tried to stop the server", sender.Name())
+		s.logging.FailF("non console sender %s tried to stop the server", sender.Name())
 		return
 	}
 
@@ -194,10 +207,10 @@ func (s *Server) stopServerCommand(sender ents.Sender, params []string) {
 	} else {
 
 		// inform future shutdown
-		s.Logging.Warn(data.Gold, "stopping server in ", data.Green, util.FormatTime(after))
+		s.logging.Warn(data.Gold, "stopping server in ", data.Green, util.FormatTime(after))
 
 		// schedule shutdown {after} seconds later
-		s.Tasking.AfterTime(after, time.Second, func(task *task.Task) {
+		s.tasking.AfterTime(after, time.Second, func(task *task.Task) {
 			s.Kill()
 		})
 

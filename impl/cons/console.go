@@ -7,7 +7,7 @@ import (
 
 	"minecraft-server/apis/base"
 	"minecraft-server/apis/logs"
-	"minecraft-server/impl/data/server"
+	"minecraft-server/impl/data/system"
 )
 
 type Console struct {
@@ -19,13 +19,13 @@ type Console struct {
 	IChannel chan string
 	OChannel chan string
 
-	report chan server.Message
+	report chan system.Message
 }
 
-func NewConsole(report chan server.Message) *Console {
+func NewConsole(report chan system.Message) *Console {
 	file, err := os.OpenFile("latest.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
 	if err != nil {
-		report <- server.Make(server.FAIL, err)
+		report <- system.Make(system.FAIL, err)
 		return nil
 	}
 
@@ -53,7 +53,7 @@ func (c *Console) Load() {
 			func() {
 				defer func() {
 					if err := recover(); err != nil {
-						c.report <- server.Make(server.FAIL, err)
+						c.report <- system.Make(system.FAIL, err)
 					}
 				}()
 
@@ -86,7 +86,7 @@ func (c *Console) Name() string {
 func (c *Console) SendMessage(message ...interface{}) {
 	defer func() {
 		if err := recover(); err != nil {
-			c.report <- server.Make(server.FAIL, err)
+			c.report <- system.Make(system.FAIL, err)
 		}
 	}()
 
