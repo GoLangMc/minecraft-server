@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"minecraft-server/apis/base"
-	"minecraft-server/impl/data"
 )
 
 type Task struct {
@@ -20,6 +19,9 @@ type Task struct {
 }
 
 type Tasking struct {
+	// milliseconds per tick
+	mpt int64
+
 	// uuid -> task
 	tasks map[int64]*Task
 
@@ -33,8 +35,10 @@ type Tasking struct {
 	kill chan bool
 }
 
-func NewTasking() *Tasking {
+func NewTasking(mpt int64) *Tasking {
 	return &Tasking{
+		mpt: mpt,
+
 		tasks: make(map[int64]*Task),
 		ticks: make(map[*Task]int64),
 		queue: make(map[int64][]*Task),
@@ -158,12 +162,12 @@ func (t *Tasking) delayed(paused int64, function func(task *Task)) {
 
 // repeats the function every period, in ticks
 func (t *Tasking) Every(period int64, function func(task *Task)) {
-	t.repeats(period*data.MPT, function)
+	t.repeats(period*t.mpt, function)
 }
 
 // executes the function after paused, in ticks
 func (t *Tasking) After(paused int64, function func(task *Task)) {
-	t.delayed(paused*data.MPT, function)
+	t.delayed(paused*t.mpt, function)
 }
 
 func (t *Tasking) EveryTime(period int64, duration time.Duration, function func(task *Task)) {

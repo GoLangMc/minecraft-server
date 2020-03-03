@@ -7,7 +7,7 @@ import (
 
 func TestTasker_Load(t *testing.T) {
 
-	tasker := NewTasking()
+	tasker := NewTasking(1_000 / 20)
 	tasker.Load()
 
 	tasker.Every(20, printCurrentTask)

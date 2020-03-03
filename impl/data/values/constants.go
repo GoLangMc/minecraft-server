@@ -1,4 +1,4 @@
-package data
+package values
 
 const (
 	// ticks per second

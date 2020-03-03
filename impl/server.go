@@ -10,12 +10,13 @@ import (
 	"minecraft-server/apis/data"
 	"minecraft-server/apis/ents"
 	"minecraft-server/apis/logs"
+	"minecraft-server/apis/task"
 	"minecraft-server/apis/util"
+
 	"minecraft-server/impl/conn"
 	"minecraft-server/impl/cons"
-
-	"minecraft-server/apis/task"
 	"minecraft-server/impl/data/server"
+	"minecraft-server/impl/data/values"
 	"minecraft-server/impl/prot"
 
 	apis "minecraft-server/apis/base"
@@ -42,7 +43,7 @@ func NewServer(host string, port int) *Server {
 	console := cons.NewConsole(message)
 	logging := logs.NewLogging("server", logs.EveryLevel...)
 
-	tasking := task.NewTasking()
+	tasking := task.NewTasking(values.MPT)
 
 	join := make(chan impl.PlayerAndConnection)
 	quit := make(chan impl.PlayerAndConnection)
