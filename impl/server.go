@@ -23,7 +23,7 @@ import (
 )
 
 type Server struct {
-	command chan server.Message
+	message chan server.Message
 
 	Console *cons.Console
 	Logging *logs.Logging
@@ -37,9 +37,9 @@ type Server struct {
 }
 
 func NewServer(host string, port int) *Server {
-	command := make(chan server.Message)
+	message := make(chan server.Message)
 
-	console := cons.NewConsole(command)
+	console := cons.NewConsole(message)
 	logging := logs.NewLogging("server", logs.EveryLevel...)
 
 	tasking := task.NewTasking()
@@ -50,16 +50,19 @@ func NewServer(host string, port int) *Server {
 	packets := prot.NewPackets(join, quit)
 	network := conn.NewNetwork(host, port, packets, join, quit)
 
+	command := cmds.NewCommandManager()
+
 	return &Server{
-		command: command,
+		message: message,
 
 		Console: console,
-		Logging: logging,
 
+		Logging: logging,
 		Tasking: tasking,
 
-		Command: cmds.NewCommandManager(),
-		// Packets: packets,
+		Command: command,
+
+		Packets: packets,
 		Network: network,
 	}
 }
@@ -137,9 +140,9 @@ func (s *Server) Kill() {
 	s.Tasking.Kill()
 	s.Network.Kill()
 
-	// push the stop command to the server exit channel
-	s.command <- server.Make(server.STOP, "normal stop")
-	close(s.command)
+	// push the stop message to the server exit channel
+	s.message <- server.Make(server.STOP, "normal stop")
+	close(s.message)
 
 	s.Logging.Info(data.DarkRed, "server stopped")
 }
@@ -147,7 +150,7 @@ func (s *Server) Kill() {
 func (s *Server) Wait() {
 	// select over server commands channel
 	select {
-	case command := <-s.command:
+	case command := <-s.message:
 		switch command.Command {
 		// stop selecting when stop is received
 		case server.STOP:
