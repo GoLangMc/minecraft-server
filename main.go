@@ -5,7 +5,6 @@ import (
 
 	"github.com/fatih/color"
 
-	"minecraft-server/apis"
 	"minecraft-server/impl"
 )
 
@@ -18,7 +17,6 @@ func main() {
 	parseParams(&host, &port)
 
 	server := impl.NewServer(host, port)
-	apis.CreateMinecraftServer(server)
 	server.Load()
 }
 
