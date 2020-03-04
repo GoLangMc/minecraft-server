@@ -46,6 +46,8 @@ type Buffer interface {
 
 	PullArr() []byte
 
+	PullPos() data.PositionI
+
 	// push
 	PushBit(data bool)
 

@@ -126,6 +126,20 @@ func (b *buffer) PullArr() []byte {
 	return arr
 }
 
+func (b *buffer) PullPos() data.PositionI {
+	val := b.PullU64()
+
+	x := int64(val) >> 38
+	y := int64(val) & 0xFFF
+	z := int64(val) << 26 >> 38
+
+	return data.PositionI{
+		X: x,
+		Y: y,
+		Z: z,
+	}
+}
+
 // push
 func (b *buffer) PushBit(data bool) {
 	if data {
