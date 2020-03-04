@@ -94,3 +94,15 @@ func (p *PacketOPlayerPositionAndLook) Push(writer base.Buffer, conn base.Connec
 
 	writer.PushVrI(p.ID)
 }
+
+type PacketOKeepAlive struct {
+	KeepAliveID int64
+}
+
+func (p *PacketOKeepAlive) UUID() int32 {
+	return 0x21
+}
+
+func (p *PacketOKeepAlive) Push(writer base.Buffer, conn base.Connection) {
+	writer.PushI64(p.KeepAliveID)
+}
