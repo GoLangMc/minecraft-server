@@ -39,18 +39,12 @@ type watcher struct {
 }
 
 func (w *watcher) Has(topic string) bool {
-	w.locker.Lock()
-	defer w.locker.Unlock()
-
 	handlers, contains := w.topics[topic]
 
 	return contains && len(handlers) > 0
 }
 
 func (w *watcher) Pub(topic string, args ...interface{}) {
-	w.locker.Lock()
-	defer w.locker.Unlock()
-
 	if handlers, contains := w.topics[topic]; contains && len(handlers) > 0 {
 
 		callArgs := make([]reflect.Value, 0)
