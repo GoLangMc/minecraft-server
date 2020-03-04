@@ -13,3 +13,15 @@ func (p *PacketIKeepAlive) UUID() int32 {
 func (p *PacketIKeepAlive) Pull(reader base.Buffer, conn base.Connection) {
 	p.KeepAliveID = reader.PullI64()
 }
+
+type PacketIChatMessage struct {
+	Message string
+}
+
+func (p *PacketIChatMessage) UUID() int32 {
+	return 0x03
+}
+
+func (p *PacketIChatMessage) Pull(reader base.Buffer, conn base.Connection) {
+	p.Message = reader.PullTxt()
+}

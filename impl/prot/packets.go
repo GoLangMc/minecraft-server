@@ -74,6 +74,9 @@ func createPacketI() map[base.PacketState]map[int32]func() base.PacketI {
 			0x0F: func() base.PacketI {
 				return &states.PacketIKeepAlive{}
 			},
+			0x03: func() base.PacketI {
+				return &states.PacketIChatMessage{}
+			},
 		},
 	}
 }
