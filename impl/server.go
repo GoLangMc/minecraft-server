@@ -37,6 +37,8 @@ type server struct {
 
 	network impl_base.Network
 	packets impl_base.Packets
+
+	players *playerAssociation
 }
 
 func NewServer(conf conf.ServerConfig) apis.Server {
@@ -67,6 +69,11 @@ func NewServer(conf conf.ServerConfig) apis.Server {
 
 		packets: packets,
 		network: network,
+
+		players: &playerAssociation{
+			uuidToData: make(map[uuid.UUID]*ents.Player),
+			connToUUID: make(map[impl_base.Connection]uuid.UUID),
+		},
 	}
 }
 
@@ -217,4 +224,44 @@ func (s *server) stopServerCommand(sender ents.Sender, params []string) {
 		})
 
 	}
+}
+
+type playerAssociation struct {
+	uuidToData map[uuid.UUID]*ents.Player
+	connToUUID map[impl_base.Connection]uuid.UUID
+}
+
+func (p *playerAssociation) addData(data impl_base.PlayerAndConnection) {
+	p.uuidToData[data.Player.UUID()] = &data.Player
+	p.connToUUID[data.Connection] = data.Player.UUID()
+}
+
+func (p *playerAssociation) delData(data impl_base.PlayerAndConnection) {
+	player := p.playerByConn(data.Connection)
+
+	delete(p.connToUUID, data.Connection)
+
+	if player != nil {
+		delete(p.uuidToData, (*player).UUID())
+	}
+}
+
+func (p *playerAssociation) playerByUUID(uuid uuid.UUID) *ents.Player {
+	return p.uuidToData[uuid]
+}
+
+func (p *playerAssociation) playerByConn(conn impl_base.Connection) *ents.Player {
+	uuid, con := p.connToUUID[conn]
+
+	if !con {
+		return nil
+	}
+
+	data, con := p.uuidToData[uuid]
+
+	if !con {
+		return nil
+	}
+
+	return data
 }
