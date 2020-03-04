@@ -23,7 +23,7 @@ func NewPackets(tasking *task.Tasking, join chan base.PlayerAndConnection, quit 
 	packets := &packets{
 		Watcher: util.NewWatcher(),
 
-		logger:  logs.NewLogging("protocol", logs.BasicLevel...),
+		logger:  logs.NewLogging("protocol", logs.EveryLevel...),
 		packetI: createPacketI(),
 	}
 
