@@ -29,7 +29,7 @@ func NewPackets(join chan base.PlayerAndConnection, quit chan base.PlayerAndConn
 	mode.HandleState0(packets)
 	mode.HandleState1(packets)
 	mode.HandleState2(packets, join)
-	mode.HandleState3(packets, packets.logger, join)
+	mode.HandleState3(packets, packets.logger, join, quit)
 
 	return packets
 }

@@ -6,7 +6,7 @@ import (
 	"minecraft-server/impl/base"
 )
 
-func HandleState3(watcher util.Watcher, logger *logs.Logging, join chan base.PlayerAndConnection) {
+func HandleState3(watcher util.Watcher, logger *logs.Logging, join chan base.PlayerAndConnection, quit chan base.PlayerAndConnection) {
 
 	go func() {
 		for conn := range join {
