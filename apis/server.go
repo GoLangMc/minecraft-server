@@ -3,16 +3,18 @@ package apis
 import (
 	"sync"
 
-	"minecraft-server/apis/base"
 	"minecraft-server/apis/cmds"
 	"minecraft-server/apis/ents"
 	"minecraft-server/apis/logs"
 	"minecraft-server/apis/task"
 	"minecraft-server/apis/util"
+
+	apis_base "minecraft-server/apis/base"
+	impl_base "minecraft-server/impl/base"
 )
 
 type Server interface {
-	base.State
+	apis_base.State
 
 	Logging() *logs.Logging
 
@@ -23,6 +25,8 @@ type Server interface {
 	Watcher() util.Watcher
 
 	Players() []ents.Player
+
+	PlayerConnection(player *ents.Player) *impl_base.Connection
 }
 
 var instance *Server

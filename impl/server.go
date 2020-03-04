@@ -80,7 +80,9 @@ func NewServer(conf conf.ServerConfig) apis.Server {
 
 		players: &playerAssociation{
 			uuidToData: make(map[uuid.UUID]*ents.Player),
+
 			connToUUID: make(map[impl_base.Connection]uuid.UUID),
+			uuidToConn: make(map[uuid.UUID]impl_base.Connection),
 		},
 	}
 }
@@ -231,6 +233,15 @@ func (s *server) Players() []ents.Player {
 	return players
 }
 
+func (s *server) PlayerConnection(player *ents.Player) *impl_base.Connection {
+	conn, con := s.players.uuidToConn[(*player).UUID()]
+	if !con {
+		return nil
+	}
+
+	return &conn
+}
+
 func (s *server) stopServerCommand(sender ents.Sender, params []string) {
 	if _, ok := sender.(*cons.Console); !ok {
 		s.logging.FailF("non console sender %s tried to stop the server", sender.Name())
@@ -272,18 +283,25 @@ func (s *server) stopServerCommand(sender ents.Sender, params []string) {
 
 type playerAssociation struct {
 	uuidToData map[uuid.UUID]*ents.Player
+
 	connToUUID map[impl_base.Connection]uuid.UUID
+	uuidToConn map[uuid.UUID]impl_base.Connection
 }
 
 func (p *playerAssociation) addData(data impl_base.PlayerAndConnection) {
 	p.uuidToData[data.Player.UUID()] = &data.Player
+
 	p.connToUUID[data.Connection] = data.Player.UUID()
+	p.uuidToConn[data.Player.UUID()] = data.Connection
 }
 
 func (p *playerAssociation) delData(data impl_base.PlayerAndConnection) {
 	player := p.playerByConn(data.Connection)
 
+	uuid := p.connToUUID[data.Connection]
+
 	delete(p.connToUUID, data.Connection)
+	delete(p.uuidToConn, uuid)
 
 	if player != nil {
 		delete(p.uuidToData, (*player).UUID())
