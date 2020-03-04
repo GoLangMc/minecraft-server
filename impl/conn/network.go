@@ -100,6 +100,11 @@ func handleConnect(network *network, conn base.Connection) {
 
 		if err != nil || sze == 0 {
 			_ = conn.Stop()
+
+			network.quit <- base.PlayerAndConnection{
+				Player:     nil,
+				Connection: conn,
+			}
 			break
 		}
 
