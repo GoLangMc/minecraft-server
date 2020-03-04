@@ -69,5 +69,5 @@ type Buffer interface {
 
 	PushArr(data []byte, prefixWithLen bool)
 
-	PushPos(data data.Position)
+	PushPos(data data.PositionI)
 }

@@ -220,8 +220,8 @@ func (b *buffer) PushArr(data []byte, prefixWithLen bool) {
 	b.pushNext(data...)
 }
 
-func (b *buffer) PushPos(data data.Position) {
-	b.PushI64(((int64(data.X) & 0x3FFFFFF) << 38) | ((int64(data.Z) & 0x3FFFFFF) << 12) | (int64(data.Y) & 0xFFF))
+func (b *buffer) PushPos(data data.PositionI) {
+	b.PushI64(((data.X & 0x3FFFFFF) << 38) | ((data.Z & 0x3FFFFFF) << 12) | (data.Y & 0xFFF))
 }
 
 // internal
