@@ -5,8 +5,10 @@ import (
 
 	"minecraft-server/apis/base"
 	"minecraft-server/apis/cmds"
+	"minecraft-server/apis/ents"
 	"minecraft-server/apis/logs"
 	"minecraft-server/apis/task"
+	"minecraft-server/apis/util"
 )
 
 type Server interface {
@@ -17,6 +19,10 @@ type Server interface {
 	Command() *cmds.CommandManager
 
 	Tasking() *task.Tasking
+
+	Watcher() util.Watcher
+
+	Players() []ents.Player
 }
 
 var instance *Server

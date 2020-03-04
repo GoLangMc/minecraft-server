@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	uuid "github.com/satori/go.uuid"
+
 	"minecraft-server/apis"
 	"minecraft-server/apis/cmds"
 	"minecraft-server/apis/data"
@@ -23,15 +25,19 @@ import (
 
 	apis_base "minecraft-server/apis/base"
 	impl_base "minecraft-server/impl/base"
+
+	apis_event "minecraft-server/apis/game/event"
+	impl_event "minecraft-server/impl/game/event"
 )
 
 type server struct {
 	message chan system.Message
 
 	console *cons.Console
-	logging *logs.Logging
 
+	logging *logs.Logging
 	tasking *task.Tasking
+	watcher util.Watcher
 
 	command *cmds.CommandManager
 
@@ -45,9 +51,10 @@ func NewServer(conf conf.ServerConfig) apis.Server {
 	message := make(chan system.Message)
 
 	console := cons.NewConsole(message)
-	logging := logs.NewLogging("server", logs.EveryLevel...)
 
+	logging := logs.NewLogging("server", logs.EveryLevel...)
 	tasking := task.NewTasking(values.MPT)
+	watcher := util.NewWatcher()
 
 	join := make(chan impl_base.PlayerAndConnection)
 	quit := make(chan impl_base.PlayerAndConnection)
@@ -64,6 +71,7 @@ func NewServer(conf conf.ServerConfig) apis.Server {
 
 		logging: logging,
 		tasking: tasking,
+		watcher: watcher,
 
 		command: command,
 
@@ -185,6 +193,20 @@ func (s *server) Command() *cmds.CommandManager {
 
 func (s *server) Tasking() *task.Tasking {
 	return s.tasking
+}
+
+func (s *server) Watcher() util.Watcher {
+	return s.watcher
+}
+
+func (s *server) Players() []ents.Player {
+	players := make([]ents.Player, 0)
+
+	for _, player := range s.players.uuidToData {
+		players = append(players, *player)
+	}
+
+	return players
 }
 
 func (s *server) stopServerCommand(sender ents.Sender, params []string) {
