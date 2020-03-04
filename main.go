@@ -12,11 +12,11 @@ import (
 func main() {
 	color.NoColor = false
 
-	server := impl.NewServer(MergeWithFlags(conf.DefaultServerConfig))
+	server := impl.NewServer(mergeWithFlags(conf.DefaultServerConfig))
 	server.Load()
 }
 
-func MergeWithFlags(c conf.ServerConfig) conf.ServerConfig {
+func mergeWithFlags(c conf.ServerConfig) conf.ServerConfig {
 	host := flag.String("host",
 		conf.DefaultServerConfig.Network.Host,
 		"the address this server will bind to")
