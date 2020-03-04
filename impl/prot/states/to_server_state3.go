@@ -2,6 +2,7 @@ package states
 
 import (
 	"minecraft-server/apis/data"
+	"minecraft-server/apis/game"
 	"minecraft-server/impl/base"
 )
 
@@ -53,4 +54,16 @@ func (p *PacketIQueryBlockNBT) UUID() int32 {
 func (p *PacketIQueryBlockNBT) Pull(reader base.Buffer, conn base.Connection) {
 	p.TransactionID = reader.PullVrI()
 	p.Position = reader.PullPos()
+}
+
+type PacketISetDifficulty struct {
+	Difficult game.Difficulty
+}
+
+func (p *PacketISetDifficulty) UUID() int32 {
+	return 0x02
+}
+
+func (p *PacketISetDifficulty) Pull(reader base.Buffer, conn base.Connection) {
+	p.Difficult = game.DifficultyValueOf(reader.PullByt())
 }
