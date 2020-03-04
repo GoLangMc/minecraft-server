@@ -33,8 +33,8 @@ func (p *PacketOEncryptionRequest) UUID() int32 {
 
 func (p *PacketOEncryptionRequest) Push(writer base.Buffer, conn base.Connection) {
 	writer.PushTxt(p.Server)
-	writer.PushArr(p.Public, true)
-	writer.PushArr(p.Verify, true)
+	writer.PushUAS(p.Public, true)
+	writer.PushUAS(p.Verify, true)
 }
 
 type PacketOLoginSuccess struct {
@@ -76,5 +76,5 @@ func (p *PacketOLoginPluginRequest) UUID() int32 {
 func (p *PacketOLoginPluginRequest) Push(writer base.Buffer, conn base.Connection) {
 	writer.PushVrI(p.MessageID)
 	writer.PushTxt(p.Channel)
-	writer.PushArr(p.OptData, false)
+	writer.PushUAS(p.OptData, false)
 }

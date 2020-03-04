@@ -113,13 +113,13 @@ func handleConnect(network *network, conn base.Connection) {
 		// decompression
 		// decryption
 
-		if buf.Arr()[0] == 0xFE { // LEGACY PING
+		if buf.UAS()[0] == 0xFE { // LEGACY PING
 			continue
 		}
 
 		packetLen := buf.PullVrI()
 
-		bufI := NewBufferWith(buf.Arr()[buf.InI() : buf.InI()+packetLen])
+		bufI := NewBufferWith(buf.UAS()[buf.InI() : buf.InI()+packetLen])
 		bufO := NewBuffer()
 
 		handleReceive(network, conn, bufI, bufO)
@@ -129,11 +129,11 @@ func handleConnect(network *network, conn base.Connection) {
 			temp.PushVrI(bufO.Len())
 
 			comp := NewBuffer()
-			comp.PushArr(conn.Deflate(bufO.Arr()), false)
+			comp.PushUAS(conn.Deflate(bufO.UAS()), false)
 
-			temp.PushArr(comp.Arr(), false)
+			temp.PushUAS(comp.UAS(), false)
 
-			_, err := conn.Push(conn.Encrypt(temp.Arr()))
+			_, err := conn.Push(conn.Encrypt(temp.UAS()))
 
 			if err != nil {
 				network.logger.Fail("Failed to push client bound packet: %v", err)

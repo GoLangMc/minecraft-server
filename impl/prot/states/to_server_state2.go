@@ -26,8 +26,8 @@ func (p *PacketIEncryptionResponse) UUID() int32 {
 }
 
 func (p *PacketIEncryptionResponse) Pull(reader base.Buffer, conn base.Connection) {
-	p.Secret = reader.PullArr()
-	p.Verify = reader.PullArr()
+	p.Secret = reader.PullUAS()
+	p.Verify = reader.PullUAS()
 }
 
 type PacketILoginPluginResponse struct {
@@ -43,5 +43,5 @@ func (p *PacketILoginPluginResponse) UUID() int32 {
 func (p *PacketILoginPluginResponse) Pull(reader base.Buffer, conn base.Connection) {
 	p.Message = reader.PullVrI()
 	p.Success = reader.PullBit()
-	p.OptData = reader.Arr()[reader.InI():reader.Len()]
+	p.OptData = reader.UAS()[reader.InI():reader.Len()]
 }

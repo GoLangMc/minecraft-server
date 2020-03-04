@@ -167,7 +167,7 @@ func (c *connection) SendPacket(packet base.PacketO) {
 	packet.Push(bufO, c)
 
 	temp.PushVrI(bufO.Len())
-	temp.PushArr(bufO.Arr(), false)
+	temp.PushUAS(bufO.UAS(), false)
 
-	_, _ = c.tcp.Write(c.Encrypt(temp.Arr()))
+	_, _ = c.tcp.Write(c.Encrypt(temp.UAS()))
 }

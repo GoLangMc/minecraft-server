@@ -48,7 +48,11 @@ func (b *buffer) Len() int32 {
 	return int32(len(b.bArray))
 }
 
-func (b *buffer) Arr() []byte {
+func (b *buffer) SAS() []int8 {
+	return asSArray(b.bArray)
+}
+
+func (b *buffer) UAS() []byte {
 	return b.bArray
 }
 
@@ -114,16 +118,20 @@ func (b *buffer) PullVrL() int64 {
 }
 
 func (b *buffer) PullTxt() string {
-	return string(b.PullArr())
+	return string(b.PullUAS())
 }
 
-func (b *buffer) PullArr() []byte {
+func (b *buffer) PullUAS() []byte {
 	sze := b.PullVrI()
 	arr := b.bArray[b.iIndex : b.iIndex+sze]
 
 	b.iIndex += sze
 
 	return arr
+}
+
+func (b *buffer) PullSAS() []int8 {
+	return asSArray(b.PullUAS())
 }
 
 func (b *buffer) PullPos() data.PositionI {
@@ -222,16 +230,19 @@ func (b *buffer) PushVrL(data int64) {
 }
 
 func (b *buffer) PushTxt(data string) {
-	b.PushArr([]byte(data), true)
+	b.PushUAS([]byte(data), true)
 }
 
-func (b *buffer) PushArr(data []byte, prefixWithLen bool) {
-
+func (b *buffer) PushUAS(data []byte, prefixWithLen bool) {
 	if prefixWithLen {
 		b.PushVrI(int32(len(data)))
 	}
 
 	b.pushNext(data...)
+}
+
+func (b *buffer) PushSAS(data []int8, prefixWithLen bool) {
+	b.PushUAS(asUArray(data), prefixWithLen)
 }
 
 func (b *buffer) PushPos(data data.PositionI) {
@@ -289,4 +300,24 @@ func (b *buffer) pullVariable(max int) int64 {
 	}
 
 	return res
+}
+
+func asSArray(bytes []byte) []int8 {
+	array := make([]int8, 0)
+
+	for _, b := range bytes {
+		array = append(array, int8(b))
+	}
+
+	return array
+}
+
+func asUArray(bytes []int8) []byte {
+	array := make([]byte, 0)
+
+	for _, b := range bytes {
+		array = append(array, byte(b))
+	}
+
+	return array
 }

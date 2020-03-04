@@ -9,7 +9,9 @@ type Buffer interface {
 	// server_data
 	Len() int32
 
-	Arr() []byte
+	SAS() []int8
+
+	UAS() []byte
 
 	InI() int32
 
@@ -44,7 +46,9 @@ type Buffer interface {
 
 	PullTxt() string
 
-	PullArr() []byte
+	PullUAS() []byte
+
+	PullSAS() []int8
 
 	PullPos() data.PositionI
 
@@ -69,7 +73,9 @@ type Buffer interface {
 
 	PushTxt(data string)
 
-	PushArr(data []byte, prefixWithLen bool)
+	PushUAS(data []byte, prefixWithLen bool)
+
+	PushSAS(data []int8, prefixWithLen bool)
 
 	PushPos(data data.PositionI)
 }
