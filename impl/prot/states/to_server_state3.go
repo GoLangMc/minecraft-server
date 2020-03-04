@@ -25,3 +25,15 @@ func (p *PacketIChatMessage) UUID() int32 {
 func (p *PacketIChatMessage) Pull(reader base.Buffer, conn base.Connection) {
 	p.Message = reader.PullTxt()
 }
+
+type PacketITeleportConfirm struct {
+	TeleportID int32
+}
+
+func (p *PacketITeleportConfirm) UUID() int32 {
+	return 0x00
+}
+
+func (p *PacketITeleportConfirm) Pull(reader base.Buffer, conn base.Connection) {
+	p.TeleportID = reader.PullVrI()
+}
