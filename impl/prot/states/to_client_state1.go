@@ -7,6 +7,8 @@ import (
 	"minecraft-server/impl/data/status"
 )
 
+// done
+
 type PacketOResponse struct {
 	Status status.Response
 }
