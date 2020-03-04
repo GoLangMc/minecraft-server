@@ -12,7 +12,7 @@ type PositionF struct {
 	Z float64
 }
 
-type Position struct {
+type Location struct {
 	PositionF
 
 	Yaw   float32
