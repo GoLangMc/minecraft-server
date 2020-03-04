@@ -46,12 +46,12 @@ func (p *packets) GetPacketI(uuid int32, state base.PacketState) base.PacketI {
 
 func createPacketI() map[base.PacketState]map[int32]func() base.PacketI {
 	return map[base.PacketState]map[int32]func() base.PacketI{
-		base.Shake: {
+		base.SHAKE: {
 			0x00: func() base.PacketI {
 				return &states.PacketIHandshake{}
 			},
 		},
-		base.Status: {
+		base.STATUS: {
 			0x00: func() base.PacketI {
 				return &states.PacketIRequest{}
 			},
@@ -59,7 +59,7 @@ func createPacketI() map[base.PacketState]map[int32]func() base.PacketI {
 				return &states.PacketIPing{}
 			},
 		},
-		base.Login: {
+		base.LOGIN: {
 			0x00: func() base.PacketI {
 				return &states.PacketILoginStart{}
 			},
@@ -70,7 +70,7 @@ func createPacketI() map[base.PacketState]map[int32]func() base.PacketI {
 				return &states.PacketILoginPluginResponse{}
 			},
 		},
-		base.Play: {
+		base.PLAY: {
 			0x00: func() base.PacketI {
 				return &states.PacketITeleportConfirm{}
 			},

@@ -90,7 +90,7 @@ func HandleState2(watcher util.Watcher, join chan base.PlayerAndConnection) {
 
 			conn.SendPacket(&response)
 
-			conn.SetState(base.Play)
+			conn.SetState(base.PLAY)
 
 			join <- base.PlayerAndConnection{
 				Player:     &player,

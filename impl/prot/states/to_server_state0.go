@@ -27,5 +27,5 @@ func (p *PacketIHandshake) Pull(reader base.Buffer, conn base.Connection) {
 
 	state := reader.PullVrI()
 
-	p.State = base.GetState(int(state))
+	p.State = base.PacketStateValueOf(int(state))
 }

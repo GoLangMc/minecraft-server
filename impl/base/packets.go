@@ -8,38 +8,42 @@ import (
 
 type PacketState int
 
-func (state PacketState) String() string {
-	switch state {
-	case Shake:
-		return "Shake"
-	case Status:
-		return "Status"
-	case Login:
-		return "Login"
-	case Play:
-		return "Play"
+const (
+	SHAKE PacketState = iota
+	STATUS
+	LOGIN
+	PLAY
+)
+
+func ValueOfPacketState(s PacketState) int {
+	return int(s)
+}
+
+func PacketStateValueOf(s int) PacketState {
+	switch s {
+	case 0:
+		return SHAKE
+	case 1:
+		return STATUS
+	case 2:
+		return LOGIN
+	case 3:
+		return PLAY
 	default:
-		panic(fmt.Errorf("no state for value: %d", state))
+		panic(fmt.Errorf("no state for value: %d", s))
 	}
 }
 
-const (
-	Shake PacketState = iota
-	Status
-	Login
-	Play
-)
-
-func GetState(state int) PacketState {
+func (state PacketState) String() string {
 	switch state {
-	case 0:
-		return Shake
-	case 1:
-		return Status
-	case 2:
-		return Login
-	case 3:
-		return Play
+	case SHAKE:
+		return "Shake"
+	case STATUS:
+		return "Status"
+	case LOGIN:
+		return "Login"
+	case PLAY:
+		return "Play"
 	default:
 		panic(fmt.Errorf("no state for value: %d", state))
 	}
@@ -47,14 +51,14 @@ func GetState(state int) PacketState {
 
 func (state PacketState) Next() PacketState {
 	switch state {
-	case Shake:
-		return Status
-	case Status:
-		return Login
-	case Login:
-		return Play
-	case Play:
-		return Shake
+	case SHAKE:
+		return STATUS
+	case STATUS:
+		return LOGIN
+	case LOGIN:
+		return PLAY
+	case PLAY:
+		return SHAKE
 	default:
 		panic(fmt.Errorf("no state for value: %d", state))
 	}
