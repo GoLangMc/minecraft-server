@@ -48,3 +48,31 @@ func (p *PacketOLoginSuccess) Push(writer base.Buffer, conn base.Connection) {
 	writer.PushTxt(p.PlayerUUID)
 	writer.PushTxt(p.PlayerName)
 }
+
+type PacketOSetCompression struct {
+	Threshold int32
+}
+
+func (p *PacketOSetCompression) UUID() int32 {
+	return 0x03
+}
+
+func (p *PacketOSetCompression) Push(writer base.Buffer, conn base.Connection) {
+	writer.PushVrI(p.Threshold)
+}
+
+type PacketOLoginPluginRequest struct {
+	MessageID int32
+	Channel   string
+	OptData   []byte
+}
+
+func (p *PacketOLoginPluginRequest) UUID() int32 {
+	return 0x04
+}
+
+func (p *PacketOLoginPluginRequest) Push(writer base.Buffer, conn base.Connection) {
+	writer.PushVrI(p.MessageID)
+	writer.PushTxt(p.Channel)
+	writer.PushArr(p.OptData, false)
+}
