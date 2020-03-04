@@ -2,6 +2,7 @@ package prot
 
 import (
 	"minecraft-server/apis/logs"
+	"minecraft-server/apis/task"
 	"minecraft-server/apis/util"
 	"minecraft-server/impl/base"
 	"minecraft-server/impl/game/mode"
@@ -18,7 +19,7 @@ type packets struct {
 	quit chan base.PlayerAndConnection
 }
 
-func NewPackets(join chan base.PlayerAndConnection, quit chan base.PlayerAndConnection) base.Packets {
+func NewPackets(tasking *task.Tasking, join chan base.PlayerAndConnection, quit chan base.PlayerAndConnection) base.Packets {
 	packets := &packets{
 		Watcher: util.NewWatcher(),
 
@@ -29,7 +30,7 @@ func NewPackets(join chan base.PlayerAndConnection, quit chan base.PlayerAndConn
 	mode.HandleState0(packets)
 	mode.HandleState1(packets)
 	mode.HandleState2(packets, join)
-	mode.HandleState3(packets, packets.logger, join, quit)
+	mode.HandleState3(packets, packets.logger, tasking, join, quit)
 
 	return packets
 }

@@ -1,15 +1,36 @@
 package mode
 
 import (
+	"time"
+
 	"minecraft-server/apis"
 	"minecraft-server/apis/logs"
+	"minecraft-server/apis/task"
 	"minecraft-server/apis/util"
 	"minecraft-server/impl/base"
+	"minecraft-server/impl/prot/states"
 
 	impl_event "minecraft-server/impl/game/event"
 )
 
-func HandleState3(watcher util.Watcher, logger *logs.Logging, join chan base.PlayerAndConnection, quit chan base.PlayerAndConnection) {
+func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Tasking, join chan base.PlayerAndConnection, quit chan base.PlayerAndConnection) {
+
+	tasking.EveryTime(10, time.Second, func(task *task.Task) {
+
+		// I hate this, add a functional method for player iterating
+		for _, player := range apis.MinecraftServer().Players() {
+
+			// also probably add one that returns both the player and their connection
+			conn := apis.MinecraftServer().PlayerConnection(&player)
+
+			// keep player connection alive via keep alive
+			(*conn).SendPacket(&states.PacketOKeepAlive{KeepAliveID: time.Now().UnixNano() / 1e6})
+		}
+	})
+
+	watcher.SubAs(func(packet *states.PacketIKeepAlive, conn base.Connection) {
+		logger.DataF("player %s is being kept alive", conn.Address())
+	})
 
 	go func() {
 		for conn := range join {
@@ -24,9 +45,9 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, join chan base.Pla
 				MaxPlayers:  10,
 				LevelType:   game.DEFAULT,
 				ReduceDebug: false,
-			})
+			})*/
 
-			conn.SendPacket(&states.PacketOPluginMessage{
+			/*conn.SendPacket(&states.PacketOPluginMessage{
 				Message: &plugin.Brand{
 					Name: data.Translate("&b&lGo&2&lMC&r"),
 				},

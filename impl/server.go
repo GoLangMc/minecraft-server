@@ -59,7 +59,7 @@ func NewServer(conf conf.ServerConfig) apis.Server {
 	join := make(chan impl_base.PlayerAndConnection)
 	quit := make(chan impl_base.PlayerAndConnection)
 
-	packets := prot.NewPackets(join, quit)
+	packets := prot.NewPackets(tasking, join, quit)
 	network := conn.NewNetwork(conf.Network.Host, conf.Network.Port, packets, join, quit)
 
 	command := cmds.NewCommandManager()
