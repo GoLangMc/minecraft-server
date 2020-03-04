@@ -13,7 +13,7 @@ type PacketOChatMessage struct {
 }
 
 func (p *PacketOChatMessage) UUID() int32 {
-	return 0x0E
+	return 0x0F
 }
 
 func (p *PacketOChatMessage) Push(writer base.Buffer, conn base.Connection) {
@@ -39,7 +39,7 @@ type PacketOJoinGame struct {
 }
 
 func (p *PacketOJoinGame) UUID() int32 {
-	return 0x25
+	return 0x26
 }
 
 func (p *PacketOJoinGame) Push(writer base.Buffer, conn base.Connection) {
@@ -57,7 +57,7 @@ type PacketOPluginMessage struct {
 }
 
 func (p *PacketOPluginMessage) UUID() int32 {
-	return 0x18
+	return 0x19
 }
 
 func (p *PacketOPluginMessage) Push(writer base.Buffer, conn base.Connection) {
@@ -79,7 +79,7 @@ type PacketOPlayerPositionAndLook struct {
 }
 
 func (p *PacketOPlayerPositionAndLook) UUID() int32 {
-	return 0x35
+	return 0x36
 }
 
 func (p *PacketOPlayerPositionAndLook) Push(writer base.Buffer, conn base.Connection) {
