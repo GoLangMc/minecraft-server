@@ -83,9 +83,7 @@ func HandleState2(watcher util.Watcher, join chan base.PlayerAndConnection) {
 			player.SetUUID(uuid)
 			player.SetName(auth.Name)
 
-			panic("jk, it totally worked!")
-
-			/*response := states.PacketOLoginSuccess{
+			response := states.PacketOLoginSuccess{
 				PlayerName: player.Name(),
 				PlayerUUID: player.UUID().String(),
 			}
@@ -97,7 +95,7 @@ func HandleState2(watcher util.Watcher, join chan base.PlayerAndConnection) {
 			join <- base.PlayerAndConnection{
 				Player:     &player,
 				Connection: conn,
-			}*/
+			}
 		})
 
 	})
