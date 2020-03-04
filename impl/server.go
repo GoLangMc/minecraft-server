@@ -114,6 +114,28 @@ func (s *server) Load() {
 		sender.SendMessage(util.FormatTime(seconds))
 	})
 
+	s.watcher.SubAs(func(event apis_event.PlayerJoinEvent) {
+		s.logging.InfoF("player %s logged in with uuid:%v", event.Player.Name(), event.Player.UUID())
+	})
+	s.watcher.SubAs(func(event apis_event.PlayerQuitEvent) {
+		s.logging.InfoF("%s disconnected!", event.Player.Name())
+	})
+
+	s.watcher.SubAs(func(event impl_event.PlayerConnJoinEvent) {
+		s.players.addData(event.Conn)
+
+		s.watcher.PubAs(apis_event.PlayerJoinEvent{Player: event.Conn.Player})
+	})
+	s.watcher.SubAs(func(event impl_event.PlayerConnQuitEvent) {
+		player := s.players.playerByConn(event.Conn.Connection)
+
+		if player != nil {
+			s.watcher.PubAs(apis_event.PlayerQuitEvent{Player: *player})
+		}
+
+		s.players.delData(event.Conn)
+	})
+
 	go func() {
 		for {
 			// read input from console
