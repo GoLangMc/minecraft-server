@@ -48,6 +48,7 @@ type server struct {
 	players *playerAssociation
 }
 
+// ==== new ====
 func NewServer(conf conf.ServerConfig) apis.Server {
 	message := make(chan system.Message)
 
@@ -88,13 +89,14 @@ func NewServer(conf conf.ServerConfig) apis.Server {
 	}
 }
 
+// ==== State ====
 func (s *server) Load() {
 	apis.SetMinecraftServer(s)
 
 	go s.loadServer()
 	go s.readInputs()
 
-	s.Wait()
+	s.wait()
 }
 
 func (s *server) Kill() {
@@ -111,23 +113,7 @@ func (s *server) Kill() {
 	s.logging.Info(chat.DarkRed, "server stopped")
 }
 
-func (s *server) Wait() {
-	// select over server commands channel
-	select {
-	case command := <-s.message:
-		switch command.Command {
-		// stop selecting when stop is received
-		case system.STOP:
-			return
-		case system.FAIL:
-			fmt.Printf("internal server error: %s\n", command.Message)
-			return
-		}
-	}
-
-	s.Wait()
-}
-
+// ==== Server ====
 func (s *server) Logging() *logs.Logging {
 	return s.logging
 }
@@ -183,6 +169,15 @@ func (s *server) Broadcast(message string) {
 	}
 }
 
+// ==== server commands ====
+func (s *server) broadcastCommand(sender ents.Sender, params []string) {
+	message := strings.Join(params, " ")
+
+	for _, player := range s.Players() {
+		player.SendMessage(message)
+	}
+}
+
 func (s *server) stopServerCommand(sender ents.Sender, params []string) {
 	if _, ok := sender.(*cons.Console); !ok {
 		s.logging.FailF("non console sender %s tried to stop the server", sender.Name())
@@ -222,39 +217,20 @@ func (s *server) stopServerCommand(sender ents.Sender, params []string) {
 	}
 }
 
+func (s *server) versionCommand(sender ents.Sender, params []string) {
+	sender.SendMessage(s.ServerVersion())
+}
+
+// ==== internal ====
 func (s *server) loadServer() {
 	s.console.Load()
 	s.command.Load()
 	s.tasking.Load()
 	s.network.Load()
 
+	s.command.Register("vers", s.versionCommand)
+	s.command.Register("send", s.broadcastCommand)
 	s.command.Register("stop", s.stopServerCommand)
-	s.command.Register("time", func(sender ents.Sender, params []string) {
-		var seconds int64 = 0
-
-		if len(params) > 0 {
-			param, err := strconv.Atoi(params[0])
-
-			if err != nil {
-				panic(err)
-			}
-
-			if param <= 0 {
-				panic(fmt.Errorf("value must be a positive whole number. [1..]"))
-			}
-
-			seconds = int64(param)
-		}
-
-		sender.SendMessage(util.FormatTime(seconds))
-	})
-	s.command.Register("send", func(sender ents.Sender, params []string) {
-		message := strings.Join(params, " ")
-
-		for _, player := range s.Players() {
-			player.SendMessage(message)
-		}
-	})
 
 	s.watcher.SubAs(func(event apis_event.PlayerJoinEvent) {
 		s.logging.InfoF("player %s logged in with uuid:%v", event.Player.Name(), event.Player.UUID())
@@ -327,6 +303,24 @@ func (s *server) readInputs() {
 	}
 }
 
+func (s *server) wait() {
+	// select over server commands channel
+	select {
+	case command := <-s.message:
+		switch command.Command {
+		// stop selecting when stop is received
+		case system.STOP:
+			return
+		case system.FAIL:
+			fmt.Printf("internal server error: %s\n", command.Message)
+			return
+		}
+	}
+
+	s.wait()
+}
+
+// ==== players ====
 type playerAssociation struct {
 	uuidToData map[uuid.UUID]ents.Player
 
