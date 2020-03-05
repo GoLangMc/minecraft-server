@@ -124,3 +124,37 @@ func (p *PacketOServerDifficulty) Push(writer base.Buffer, conn base.Connection)
 	writer.PushByt(byte(p.Difficulty))
 	writer.PushBit(p.Locked)
 }
+
+type PacketOPlayerAbilities struct {
+	Invulnerable bool
+	Flying       bool
+	AllowFlight  bool
+	InstantBuild bool // creative??
+	FlyingSpeed  float32
+	FieldOfView  float32
+}
+
+func (p *PacketOPlayerAbilities) UUID() int32 {
+	return 0x32
+}
+
+func (p *PacketOPlayerAbilities) Push(writer base.Buffer, conn base.Connection) {
+	flags := byte(0)
+
+	if p.Invulnerable {
+		flags |= 1
+	}
+	if p.Flying {
+		flags |= 2
+	}
+	if p.AllowFlight {
+		flags |= 3
+	}
+	if p.InstantBuild {
+		flags |= 4
+	}
+
+	writer.PushByt(flags)
+	writer.PushF32(p.FlyingSpeed)
+	writer.PushF32(p.FieldOfView)
+}
