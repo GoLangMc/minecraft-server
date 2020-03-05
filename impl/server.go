@@ -312,7 +312,8 @@ func (s *server) wait() {
 		case system.STOP:
 			return
 		case system.FAIL:
-			fmt.Printf("internal server error: %s\n", command.Message)
+			s.logging.Fail("internal server error: ", command.Message)
+			s.logging.Fail("stopping server")
 			return
 		}
 	}
