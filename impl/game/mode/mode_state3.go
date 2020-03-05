@@ -59,6 +59,20 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 				},
 			})
 
+			conn.SendPacket(&states.PacketOServerDifficulty{
+				Difficulty: game.PEACEFUL,
+				Locked:     true,
+			})
+
+			conn.SendPacket(&states.PacketOPlayerAbilities{
+				Invulnerable: true,
+				Flying:       true,
+				AllowFlight:  true,
+				InstantBuild: false,
+				FlyingSpeed:  0.05, // default value
+				FieldOfView:  0.1,  // default value
+			})
+
 			/*
 				conn.SendPacket(&states.PacketOPlayerPositionAndLook{
 					X:     0,
