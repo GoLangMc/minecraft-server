@@ -87,3 +87,8 @@ type BufferPush interface {
 type BufferPull interface {
 	Pull(reader Buffer)
 }
+
+type BufferCodec interface {
+	BufferPush
+	BufferPull
+}
