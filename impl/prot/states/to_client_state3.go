@@ -110,3 +110,17 @@ func (p *PacketOKeepAlive) UUID() int32 {
 func (p *PacketOKeepAlive) Push(writer base.Buffer, conn base.Connection) {
 	writer.PushI64(p.KeepAliveID)
 }
+
+type PacketOServerDifficulty struct {
+	Difficulty game.Difficulty
+	Locked     bool // should probably always be true
+}
+
+func (p *PacketOServerDifficulty) UUID() int32 {
+	return 0x0E
+}
+
+func (p *PacketOServerDifficulty) Push(writer base.Buffer, conn base.Connection) {
+	writer.PushByt(byte(p.Difficulty))
+	writer.PushBit(p.Locked)
+}
