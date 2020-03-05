@@ -24,13 +24,15 @@ type network struct {
 	report chan system.Message
 }
 
-func NewNetwork(host string, port int, packet base.Packets, join chan base.PlayerAndConnection, quit chan base.PlayerAndConnection) base.Network {
+func NewNetwork(host string, port int, packet base.Packets, report chan system.Message, join chan base.PlayerAndConnection, quit chan base.PlayerAndConnection) base.Network {
 	return &network{
 		host: host,
 		port: port,
 
 		join: join,
 		quit: quit,
+
+		report: report,
 
 		logger:  logs.NewLogging("network", logs.EveryLevel...),
 		packets: packet,

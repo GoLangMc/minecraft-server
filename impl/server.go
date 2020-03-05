@@ -61,7 +61,7 @@ func NewServer(conf conf.ServerConfig) apis.Server {
 	quit := make(chan impl_base.PlayerAndConnection)
 
 	packets := prot.NewPackets(tasking, join, quit)
-	network := conn.NewNetwork(conf.Network.Host, conf.Network.Port, packets, join, quit)
+	network := conn.NewNetwork(conf.Network.Host, conf.Network.Port, packets, message, join, quit)
 
 	command := cmds.NewCommandManager()
 
@@ -91,108 +91,8 @@ func NewServer(conf conf.ServerConfig) apis.Server {
 func (s *server) Load() {
 	apis.SetMinecraftServer(s)
 
-	s.console.Load()
-	s.command.Load()
-	s.tasking.Load()
-	s.network.Load()
-
-	s.command.Register("stop", s.stopServerCommand)
-	s.command.Register("time", func(sender ents.Sender, params []string) {
-		var seconds int64 = 0
-
-		if len(params) > 0 {
-			param, err := strconv.Atoi(params[0])
-
-			if err != nil {
-				panic(err)
-			}
-
-			if param <= 0 {
-				panic(fmt.Errorf("value must be a positive whole number. [1..]"))
-			}
-
-			seconds = int64(param)
-		}
-
-		sender.SendMessage(util.FormatTime(seconds))
-	})
-	s.command.Register("send", func(sender ents.Sender, params []string) {
-		message := strings.Join(params, " ")
-
-		for _, player := range s.Players() {
-			player.SendMessage(message)
-		}
-	})
-
-	s.watcher.SubAs(func(event apis_event.PlayerJoinEvent) {
-		s.logging.InfoF("player %s logged in with uuid:%v", event.Player.Name(), event.Player.UUID())
-
-		s.Broadcast(chat.Translate(fmt.Sprintf("%s%s has joined!", chat.Yellow, event.Player.Name())))
-	})
-	s.watcher.SubAs(func(event apis_event.PlayerQuitEvent) {
-		s.logging.InfoF("%s disconnected!", event.Player.Name())
-
-		s.Broadcast(chat.Translate(fmt.Sprintf("%s%s has left!", chat.Yellow, event.Player.Name())))
-	})
-
-	s.watcher.SubAs(func(event impl_event.PlayerConnJoinEvent) {
-		s.players.addData(event.Conn)
-
-		s.watcher.PubAs(apis_event.PlayerJoinEvent{Player: event.Conn.Player})
-	})
-	s.watcher.SubAs(func(event impl_event.PlayerConnQuitEvent) {
-		player := s.players.playerByConn(event.Conn.Connection)
-
-		if player != nil {
-			s.watcher.PubAs(apis_event.PlayerQuitEvent{Player: *player})
-		}
-
-		s.players.delData(event.Conn)
-	})
-
-	s.watcher.SubAs(func(event impl_event.PlayerPluginMessagePullEvent) {
-		s.logging.DataF("received message on channel '%s' from player %s:%s", event.Channel, event.Conn.Name(), event.Conn.UUID())
-
-		switch event.Channel {
-		case plugin.CHANNEL_BRAND:
-			s.logging.DataF("their client's brand is '%s'", event.Message.(*plugin.Brand).Name)
-		}
-	})
-
-	go func() {
-		for {
-			// read input from console
-			text := strings.Trim(<-s.console.IChannel, " ")
-			if len(text) == 0 {
-				continue
-			}
-
-			args := strings.Split(text, " ")
-			if len(args) == 0 {
-				continue
-			}
-
-			if command := s.command.Search(args[0]); command != nil {
-
-				err := apis_base.Attempt(func() {
-					(*command).Evaluate(s.console, args[1:])
-				})
-
-				if err != nil {
-					s.logging.Fail(
-						chat.Red, "failed to evaluate ",
-						chat.DarkGray, "`",
-						chat.White, (*command).Name(),
-						chat.DarkGray, "`",
-						chat.Red, ": ", err.Error()[8:])
-				}
-
-				continue
-			}
-
-			s.console.SendMessage(text)
-		}
-	}()
+	go s.loadServer()
+	go s.readInputs()
 
 	s.Wait()
 }
@@ -319,6 +219,111 @@ func (s *server) stopServerCommand(sender ents.Sender, params []string) {
 			s.Kill()
 		})
 
+	}
+}
+
+func (s *server) loadServer() {
+	s.console.Load()
+	s.command.Load()
+	s.tasking.Load()
+	s.network.Load()
+
+	s.command.Register("stop", s.stopServerCommand)
+	s.command.Register("time", func(sender ents.Sender, params []string) {
+		var seconds int64 = 0
+
+		if len(params) > 0 {
+			param, err := strconv.Atoi(params[0])
+
+			if err != nil {
+				panic(err)
+			}
+
+			if param <= 0 {
+				panic(fmt.Errorf("value must be a positive whole number. [1..]"))
+			}
+
+			seconds = int64(param)
+		}
+
+		sender.SendMessage(util.FormatTime(seconds))
+	})
+	s.command.Register("send", func(sender ents.Sender, params []string) {
+		message := strings.Join(params, " ")
+
+		for _, player := range s.Players() {
+			player.SendMessage(message)
+		}
+	})
+
+	s.watcher.SubAs(func(event apis_event.PlayerJoinEvent) {
+		s.logging.InfoF("player %s logged in with uuid:%v", event.Player.Name(), event.Player.UUID())
+
+		s.Broadcast(chat.Translate(fmt.Sprintf("%s%s has joined!", chat.Yellow, event.Player.Name())))
+	})
+	s.watcher.SubAs(func(event apis_event.PlayerQuitEvent) {
+		s.logging.InfoF("%s disconnected!", event.Player.Name())
+
+		s.Broadcast(chat.Translate(fmt.Sprintf("%s%s has left!", chat.Yellow, event.Player.Name())))
+	})
+
+	s.watcher.SubAs(func(event impl_event.PlayerConnJoinEvent) {
+		s.players.addData(event.Conn)
+
+		s.watcher.PubAs(apis_event.PlayerJoinEvent{Player: event.Conn.Player})
+	})
+	s.watcher.SubAs(func(event impl_event.PlayerConnQuitEvent) {
+		player := s.players.playerByConn(event.Conn.Connection)
+
+		if player != nil {
+			s.watcher.PubAs(apis_event.PlayerQuitEvent{Player: player})
+		}
+
+		s.players.delData(event.Conn)
+	})
+
+	s.watcher.SubAs(func(event impl_event.PlayerPluginMessagePullEvent) {
+		s.logging.DataF("received message on channel '%s' from player %s:%s", event.Channel, event.Conn.Name(), event.Conn.UUID())
+
+		switch event.Channel {
+		case plugin.CHANNEL_BRAND:
+			s.logging.DataF("their client's brand is '%s'", event.Message.(*plugin.Brand).Name)
+		}
+	})
+}
+
+func (s *server) readInputs() {
+	for {
+		// read input from console
+		text := strings.Trim(<-s.console.IChannel, " ")
+		if len(text) == 0 {
+			continue
+		}
+
+		args := strings.Split(text, " ")
+		if len(args) == 0 {
+			continue
+		}
+
+		if command := s.command.Search(args[0]); command != nil {
+
+			err := apis_base.Attempt(func() {
+				(*command).Evaluate(s.console, args[1:])
+			})
+
+			if err != nil {
+				s.logging.Fail(
+					chat.Red, "failed to evaluate ",
+					chat.DarkGray, "`",
+					chat.White, (*command).Name(),
+					chat.DarkGray, "`",
+					chat.Red, ": ", err.Error()[8:])
+			}
+
+			continue
+		}
+
+		s.console.SendMessage(text)
 	}
 }
 
