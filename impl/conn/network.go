@@ -53,12 +53,12 @@ func (n *network) Kill() {
 func (n *network) startListening() error {
 	ser, err := net.ResolveTCPAddr("tcp", n.host+":"+strconv.Itoa(n.port))
 	if err != nil {
-		return fmt.Errorf("resolution failed [%v]", err)
+		return fmt.Errorf("address resolution failed [%v]", err)
 	}
 
 	tcp, err := net.ListenTCP("tcp", ser)
 	if err != nil {
-		return fmt.Errorf("binding failed [%v]", err)
+		return fmt.Errorf("failed to bind [%v]", err)
 	}
 
 	n.logger.InfoF("listening on %s:%d", n.host, n.port)
