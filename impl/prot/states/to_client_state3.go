@@ -142,3 +142,15 @@ func (p *PacketOPlayerAbilities) Push(writer base.Buffer, conn base.Connection) 
 	writer.PushF32(p.FlyingSpeed)
 	writer.PushF32(p.FieldOfView)
 }
+
+type PacketOHeldItemChange struct {
+	Slot client.HotBarSlot
+}
+
+func (p *PacketOHeldItemChange) UUID() int32 {
+	return 0x40
+}
+
+func (p *PacketOHeldItemChange) Push(writer base.Buffer, conn base.Connection) {
+	writer.PushByt(byte(p.Slot))
+}
