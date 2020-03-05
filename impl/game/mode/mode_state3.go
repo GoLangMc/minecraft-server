@@ -6,6 +6,7 @@ import (
 
 	"minecraft-server/apis"
 	"minecraft-server/apis/data"
+	"minecraft-server/apis/data/msg"
 	"minecraft-server/apis/game"
 	"minecraft-server/apis/logs"
 	"minecraft-server/apis/task"
@@ -56,6 +57,20 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 			Channel: packet.Message.Chan(),
 			Message: packet.Message,
 		})
+	})
+
+	watcher.SubAs(func(packet *states.PacketIChatMessage, conn base.Connection) {
+		api := apis.MinecraftServer()
+
+		who := api.PlayerByConn(conn)
+		out := msg.
+			New(who.Name()).SetColor(data.White).
+			Add(":").SetColor(data.Gray).
+			Add(" ").
+			Add(data.Translate(packet.Message)).SetColor(data.White).
+			AsText() // why not just use translate?
+
+		api.Broadcast(out)
 	})
 
 	go func() {
