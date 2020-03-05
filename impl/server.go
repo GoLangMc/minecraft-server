@@ -80,7 +80,7 @@ func NewServer(conf conf.ServerConfig) apis.Server {
 		network: network,
 
 		players: &playerAssociation{
-			uuidToData: make(map[uuid.UUID]*ents.Player),
+			uuidToData: make(map[uuid.UUID]ents.Player),
 
 			connToUUID: make(map[impl_base.Connection]uuid.UUID),
 			uuidToConn: make(map[uuid.UUID]impl_base.Connection),
@@ -148,7 +148,7 @@ func (s *server) Players() []ents.Player {
 	players := make([]ents.Player, 0)
 
 	for _, player := range s.players.uuidToData {
-		players = append(players, *player)
+		players = append(players, player)
 	}
 
 	return players
@@ -159,7 +159,7 @@ func (s *server) ConnByUUID(uuid uuid.UUID) impl_base.Connection {
 }
 
 func (s *server) PlayerByUUID(uuid uuid.UUID) ents.Player {
-	return *s.players.uuidToData[uuid]
+	return s.players.uuidToData[uuid]
 }
 
 func (s *server) PlayerByConn(conn impl_base.Connection) ents.Player {
@@ -328,14 +328,14 @@ func (s *server) readInputs() {
 }
 
 type playerAssociation struct {
-	uuidToData map[uuid.UUID]*ents.Player
+	uuidToData map[uuid.UUID]ents.Player
 
 	connToUUID map[impl_base.Connection]uuid.UUID
 	uuidToConn map[uuid.UUID]impl_base.Connection
 }
 
 func (p *playerAssociation) addData(data impl_base.PlayerAndConnection) {
-	p.uuidToData[data.Player.UUID()] = &data.Player
+	p.uuidToData[data.Player.UUID()] = data.Player
 
 	p.connToUUID[data.Connection] = data.Player.UUID()
 	p.uuidToConn[data.Player.UUID()] = data.Connection
@@ -350,15 +350,15 @@ func (p *playerAssociation) delData(data impl_base.PlayerAndConnection) {
 	delete(p.uuidToConn, uuid)
 
 	if player != nil {
-		delete(p.uuidToData, (*player).UUID())
+		delete(p.uuidToData, player.UUID())
 	}
 }
 
-func (p *playerAssociation) playerByUUID(uuid uuid.UUID) *ents.Player {
+func (p *playerAssociation) playerByUUID(uuid uuid.UUID) ents.Player {
 	return p.uuidToData[uuid]
 }
 
-func (p *playerAssociation) playerByConn(conn impl_base.Connection) *ents.Player {
+func (p *playerAssociation) playerByConn(conn impl_base.Connection) ents.Player {
 	uuid, con := p.connToUUID[conn]
 
 	if !con {

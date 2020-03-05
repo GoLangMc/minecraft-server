@@ -77,14 +77,7 @@ func HandleState2(watcher util.Watcher, join chan base.PlayerAndConnection) {
 				panic(fmt.Errorf("failed to decode uuid for %s: %s\n%v\n", conn.CertifyName(), auth.UUID, err))
 			}
 
-			player := ents.NewPlayer()
-
-			// store the player object somewhere
-
-			player.SetUUID(uuid)
-			player.SetName(auth.Name)
-
-			player.SetConnection(conn)
+			player := ents.NewPlayer(uuid, auth.Name, conn)
 
 			conn.SendPacket(&states.PacketOLoginSuccess{
 				PlayerName: player.Name(),
@@ -94,7 +87,7 @@ func HandleState2(watcher util.Watcher, join chan base.PlayerAndConnection) {
 			conn.SetState(base.PLAY)
 
 			join <- base.PlayerAndConnection{
-				Player:     &player,
+				Player:     player,
 				Connection: conn,
 			}
 		})
