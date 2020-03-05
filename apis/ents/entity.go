@@ -8,4 +8,6 @@ type Entity interface {
 	Sender
 
 	UUID() uuid.UUID
+
+	EntityUUID() int64
 }

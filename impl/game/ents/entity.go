@@ -2,9 +2,20 @@ package ents
 
 import "github.com/satori/go.uuid"
 
+var entityCounter = int64(0)
+
 type entity struct {
 	name string
 	uuid uuid.UUID
+
+	entityID int64
+}
+
+func newEntity() entity {
+	id := entityCounter
+	entityCounter++
+
+	return entity{entityID: id}
 }
 
 func (e *entity) Name() string {
@@ -21,4 +32,12 @@ func (e *entity) SetName(name string) {
 
 func (e *entity) SetUUID(uuid uuid.UUID) {
 	e.uuid = uuid
+}
+
+func (e *entity) SendMessage(message ...interface{}) {
+	// nothing
+}
+
+func (e *entity) EntityUUID() int64 {
+	return e.entityID
 }

@@ -6,6 +6,10 @@ type entityLiving struct {
 	health float64
 }
 
+func newEntityLiving() entityLiving {
+	return entityLiving{entity: newEntity()}
+}
+
 func (e *entityLiving) GetHealth() float64 {
 	return e.health
 }

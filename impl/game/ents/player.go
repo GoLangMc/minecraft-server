@@ -18,7 +18,9 @@ type player struct {
 }
 
 func NewPlayer() player {
-	return player{}
+	return player{
+		entityLiving: newEntityLiving(),
+	}
 }
 
 func (p *player) SendMessage(message ...interface{}) {
