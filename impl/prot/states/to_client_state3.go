@@ -154,3 +154,17 @@ func (p *PacketOHeldItemChange) UUID() int32 {
 func (p *PacketOHeldItemChange) Push(writer base.Buffer, conn base.Connection) {
 	writer.PushByt(byte(p.Slot))
 }
+
+type PacketODeclareRecipes struct {
+	// Recipes []*Recipe // this doesn't exist yet ;(
+	RecipeCount int32
+}
+
+func (p *PacketODeclareRecipes) UUID() int32 {
+	return 0x5B
+}
+
+func (p *PacketODeclareRecipes) Push(writer base.Buffer, conn base.Connection) {
+	writer.PushVrI(p.RecipeCount)
+	// when recipes are implemented, instead of holding a recipe count, simply write the size of the slice, Recipe will implement BufferPush
+}
