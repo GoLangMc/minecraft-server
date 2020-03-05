@@ -61,7 +61,7 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 			apis.MinecraftServer().Watcher().PubAs(impl_event.PlayerConnJoinEvent{Conn: conn})
 
 			conn.SendPacket(&states.PacketOJoinGame{
-				EntityID:      0,
+				EntityID:      int32(conn.EntityUUID()),
 				Hardcore:      false,
 				GameMode:      game.CREATIVE,
 				Dimension:     game.OVERWORLD,
