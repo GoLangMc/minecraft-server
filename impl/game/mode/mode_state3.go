@@ -38,6 +38,24 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 		logger.DataF("player %s is being kept alive", conn.Address())
 	})
 
+	watcher.SubAs(func(packet *states.PacketIPluginMessage, conn base.Connection) {
+		api := apis.MinecraftServer()
+
+		player := api.PlayerByConn(conn)
+		if player == nil {
+			return // log no player found?
+		}
+
+		api.Watcher().PubAs(impl_event.PlayerPluginMessagePullEvent{
+			Conn: base.PlayerAndConnection{
+				Connection: conn,
+				Player:     player,
+			},
+			Channel: packet.Message.Chan(),
+			Message: packet.Message,
+		})
+	})
+
 	go func() {
 		for conn := range join {
 			apis.MinecraftServer().Watcher().PubAs(impl_event.PlayerConnJoinEvent{Conn: conn})
