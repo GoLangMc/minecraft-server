@@ -4,6 +4,7 @@ import (
 	"minecraft-server/apis/data"
 	"minecraft-server/apis/game"
 	"minecraft-server/impl/base"
+	"minecraft-server/impl/data/client"
 	"minecraft-server/impl/data/plugin"
 )
 
@@ -88,4 +89,16 @@ func (p *PacketIPluginMessage) Pull(reader base.Buffer, conn base.Connection) {
 	message.Pull(reader)
 
 	p.Message = message
+}
+
+type PacketIClientStatus struct {
+	Action client.StatusAction
+}
+
+func (p *PacketIClientStatus) UUID() int32 {
+	return 0x04
+}
+
+func (p *PacketIClientStatus) Pull(reader base.Buffer, conn base.Connection) {
+	p.Action = client.StatusAction(reader.PullVrI())
 }

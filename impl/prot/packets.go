@@ -83,6 +83,9 @@ func createPacketI() map[base.PacketState]map[int32]func() base.PacketI {
 			0x03: func() base.PacketI {
 				return &states.PacketIChatMessage{}
 			},
+			0x04: func() base.PacketI {
+				return &states.PacketIClientStatus{}
+			},
 			0x0B: func() base.PacketI {
 				return &states.PacketIPluginMessage{}
 			},
