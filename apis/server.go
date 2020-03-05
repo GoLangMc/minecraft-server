@@ -3,6 +3,8 @@ package apis
 import (
 	"sync"
 
+	"github.com/satori/go.uuid"
+
 	"minecraft-server/apis/cmds"
 	"minecraft-server/apis/ents"
 	"minecraft-server/apis/logs"
@@ -26,7 +28,11 @@ type Server interface {
 
 	Players() []ents.Player
 
-	PlayerConnection(player *ents.Player) *impl_base.Connection
+	ConnByUUID(uuid uuid.UUID) impl_base.Connection
+
+	PlayerByUUID(uuid uuid.UUID) ents.Player
+
+	PlayerByConn(conn impl_base.Connection) ents.Player
 }
 
 var instance *Server

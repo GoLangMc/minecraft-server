@@ -21,14 +21,16 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 
 	tasking.EveryTime(10, time.Second, func(task *task.Task) {
 
+		api := apis.MinecraftServer()
+
 		// I hate this, add a functional method for player iterating
-		for _, player := range apis.MinecraftServer().Players() {
+		for _, player := range api.Players() {
 
 			// also probably add one that returns both the player and their connection
-			conn := apis.MinecraftServer().PlayerConnection(&player)
+			conn := api.ConnByUUID(player.UUID())
 
 			// keep player connection alive via keep alive
-			(*conn).SendPacket(&states.PacketOKeepAlive{KeepAliveID: time.Now().UnixNano() / 1e6})
+			conn.SendPacket(&states.PacketOKeepAlive{KeepAliveID: time.Now().UnixNano() / 1e6})
 		}
 	})
 

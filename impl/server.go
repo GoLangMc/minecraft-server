@@ -233,13 +233,21 @@ func (s *server) Players() []ents.Player {
 	return players
 }
 
-func (s *server) PlayerConnection(player *ents.Player) *impl_base.Connection {
-	conn, con := s.players.uuidToConn[(*player).UUID()]
+func (s *server) ConnByUUID(uuid uuid.UUID) impl_base.Connection {
+	return s.players.uuidToConn[uuid]
+}
+
+func (s *server) PlayerByUUID(uuid uuid.UUID) ents.Player {
+	return *s.players.uuidToData[uuid]
+}
+
+func (s *server) PlayerByConn(conn impl_base.Connection) ents.Player {
+	uuid, con := s.players.connToUUID[conn]
 	if !con {
 		return nil
 	}
 
-	return &conn
+	return s.PlayerByUUID(uuid)
 }
 
 func (s *server) stopServerCommand(sender ents.Sender, params []string) {
