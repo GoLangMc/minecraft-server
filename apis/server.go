@@ -35,6 +35,8 @@ type Server interface {
 	PlayerByConn(conn impl_base.Connection) ents.Player
 
 	ServerVersion() string
+
+	Broadcast(message string)
 }
 
 var instance *Server
