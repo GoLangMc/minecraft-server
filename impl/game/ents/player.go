@@ -1,8 +1,6 @@
 package ents
 
 import (
-	"fmt"
-
 	"minecraft-server/apis/data"
 	"minecraft-server/impl/prot/states"
 
@@ -31,8 +29,6 @@ func (p *player) SendMessage(message ...interface{}) {
 		Message:         data.NewMessage(apis_base.ConvertToString(message...)),
 		MessagePosition: data.NormalChat,
 	}
-
-	fmt.Println(p.conn)
 
 	p.conn.SendPacket(&packet)
 }
