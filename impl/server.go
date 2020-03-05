@@ -16,6 +16,7 @@ import (
 	"minecraft-server/apis/task"
 	"minecraft-server/apis/util"
 	"minecraft-server/impl/conf"
+	"minecraft-server/impl/data/plugin"
 
 	"minecraft-server/impl/conn"
 	"minecraft-server/impl/cons"
@@ -136,6 +137,15 @@ func (s *server) Load() {
 		}
 
 		s.players.delData(event.Conn)
+	})
+
+	s.watcher.SubAs(func(event impl_event.PlayerPluginMessagePullEvent) {
+		s.logging.DataF("received message on channel %s from player %s", event.Channel, event.Conn.UUID())
+
+		switch event.Channel {
+		case "minecraft:brand":
+			s.logging.DataF("their client's brand is '%s'", event.Message.(*plugin.Brand).Name)
+		}
 	})
 
 	go func() {
