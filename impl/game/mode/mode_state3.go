@@ -4,11 +4,13 @@ import (
 	"time"
 
 	"minecraft-server/apis"
+	"minecraft-server/apis/data"
 	"minecraft-server/apis/game"
 	"minecraft-server/apis/logs"
 	"minecraft-server/apis/task"
 	"minecraft-server/apis/util"
 	"minecraft-server/impl/base"
+	"minecraft-server/impl/data/plugin"
 	"minecraft-server/impl/data/values"
 	"minecraft-server/impl/prot/states"
 
@@ -53,21 +55,22 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 				RespawnScreen: false,
 			})
 
-			/*conn.SendPacket(&states.PacketOPluginMessage{
+			conn.SendPacket(&states.PacketOPluginMessage{
 				Message: &plugin.Brand{
 					Name: data.Translate("&b&lGo&2&lMC&r"),
 				},
 			})
 
-			conn.SendPacket(&states.PacketOPlayerPositionAndLook{
-				X:     0,
-				Y:     100,
-				Z:     0,
-				Yaw:   0,
-				Pitch: 0,
-				Flags: 0,
-				ID:    0,
-			})*/
+			/*
+				conn.SendPacket(&states.PacketOPlayerPositionAndLook{
+					X:     0,
+					Y:     100,
+					Z:     0,
+					Yaw:   0,
+					Pitch: 0,
+					Flags: 0,
+					ID:    0,
+				})*/
 		}
 	}()
 
