@@ -83,6 +83,8 @@ func HandleState2(watcher util.Watcher, join chan base.PlayerAndConnection) {
 			player.SetUUID(uuid)
 			player.SetName(auth.Name)
 
+			player.SetConnection(conn)
+
 			conn.SendPacket(&states.PacketOLoginSuccess{
 				PlayerName: player.Name(),
 				PlayerUUID: player.UUID().String(),

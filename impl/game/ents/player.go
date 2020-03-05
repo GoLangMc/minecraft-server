@@ -1,10 +1,13 @@
 package ents
 
 import (
-	"minecraft-server/apis/base"
+	"fmt"
+
 	"minecraft-server/apis/data"
-	impl "minecraft-server/impl/base"
 	"minecraft-server/impl/prot/states"
+
+	apis_base "minecraft-server/apis/base"
+	impl_base "minecraft-server/impl/base"
 )
 
 type player struct {
@@ -14,7 +17,7 @@ type player struct {
 
 	online bool
 
-	conn impl.Connection
+	conn impl_base.Connection
 }
 
 func NewPlayer() player {
@@ -25,9 +28,11 @@ func NewPlayer() player {
 
 func (p *player) SendMessage(message ...interface{}) {
 	packet := states.PacketOChatMessage{
-		Message:         data.NewMessage(base.ConvertToString(message...)),
+		Message:         data.NewMessage(apis_base.ConvertToString(message...)),
 		MessagePosition: data.NormalChat,
 	}
+
+	fmt.Println(p.conn)
 
 	p.conn.SendPacket(&packet)
 }
@@ -38,4 +43,8 @@ func (p *player) GetIsOnline() bool {
 
 func (p *player) SetIsOnline(state bool) {
 	p.online = state
+}
+
+func (p *player) SetConnection(conn impl_base.Connection) {
+	p.conn = conn
 }
