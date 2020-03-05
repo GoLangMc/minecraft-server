@@ -13,16 +13,16 @@ func (p *PlayerAbilities) Push(writer base.Buffer) {
 	flags := byte(0)
 
 	if p.Invulnerable {
-		flags |= 1
+		flags |= 0x01
 	}
 	if p.Flying {
-		flags |= 2
+		flags |= 0x02
 	}
 	if p.AllowFlight {
-		flags |= 3
+		flags |= 0x04
 	}
 	if p.InstantBuild {
-		flags |= 4
+		flags |= 0x08
 	}
 
 	writer.PushByt(flags)
