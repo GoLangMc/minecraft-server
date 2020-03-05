@@ -33,9 +33,9 @@ type PacketOJoinGame struct {
 	GameMode      game.GameMode
 	Dimension     game.Dimension
 	HashedSeed    int64
-	Difficulty    game.Difficulty
 	MaxPlayers    int
 	LevelType     game.LevelType
+	ViewDistance  int32
 	ReduceDebug   bool
 	RespawnScreen bool
 }
@@ -51,7 +51,7 @@ func (p *PacketOJoinGame) Push(writer base.Buffer, conn base.Connection) {
 	writer.PushI64(p.HashedSeed)
 	writer.PushByt(uint8(p.MaxPlayers))
 	writer.PushTxt(p.LevelType.String())
-	writer.PushVrI(12)
+	writer.PushVrI(p.ViewDistance)
 	writer.PushBit(p.ReduceDebug)
 	writer.PushBit(p.RespawnScreen)
 }

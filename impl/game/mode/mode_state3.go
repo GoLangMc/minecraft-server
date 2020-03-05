@@ -41,16 +41,14 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 			apis.MinecraftServer().Watcher().PubAs(impl_event.PlayerConnJoinEvent{Conn: conn})
 
 			conn.SendPacket(&states.PacketOJoinGame{
-				EntityID:  0,
-				Hardcore:  false,
-				GameMode:  game.CREATIVE,
-				Dimension: game.OVERWORLD,
-
-				HashedSeed: values.DefaultWorldHashedSeed,
-
-				Difficulty:    game.PEACEFUL,
+				EntityID:      0,
+				Hardcore:      false,
+				GameMode:      game.CREATIVE,
+				Dimension:     game.OVERWORLD,
+				HashedSeed:    values.DefaultWorldHashedSeed,
 				MaxPlayers:    10,
 				LevelType:     game.DEFAULT,
+				ViewDistance:  12,
 				ReduceDebug:   false,
 				RespawnScreen: false,
 			})
