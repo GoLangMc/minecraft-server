@@ -128,3 +128,23 @@ func (p *PacketIClientSettings) Pull(reader base.Buffer, conn base.Connection) {
 	p.SkinParts = parts
 	p.MainHand = client.MainHand(reader.PullVrI())
 }
+
+type PacketIPlayerAbilities struct {
+	Abilities   client.PlayerAbilities
+	FlightSpeed float32
+	GroundSpeed float32
+}
+
+func (p *PacketIPlayerAbilities) UUID() int32 {
+	return 0x19
+}
+
+func (p *PacketIPlayerAbilities) Pull(reader base.Buffer, conn base.Connection) {
+	abilities := client.PlayerAbilities{}
+	abilities.Pull(reader)
+
+	p.Abilities = abilities
+
+	p.FlightSpeed = reader.PullF32()
+	p.GroundSpeed = reader.PullF32()
+}
