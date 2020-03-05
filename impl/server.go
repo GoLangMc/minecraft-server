@@ -126,9 +126,13 @@ func (s *server) Load() {
 
 	s.watcher.SubAs(func(event apis_event.PlayerJoinEvent) {
 		s.logging.InfoF("player %s logged in with uuid:%v", event.Player.Name(), event.Player.UUID())
+
+		s.Broadcast(chat.Translate(fmt.Sprintf("%s%s has joined!", chat.Yellow, event.Player.Name())))
 	})
 	s.watcher.SubAs(func(event apis_event.PlayerQuitEvent) {
 		s.logging.InfoF("%s disconnected!", event.Player.Name())
+
+		s.Broadcast(chat.Translate(fmt.Sprintf("%s%s has left!", chat.Yellow, event.Player.Name())))
 	})
 
 	s.watcher.SubAs(func(event impl_event.PlayerConnJoinEvent) {
