@@ -79,3 +79,11 @@ type Buffer interface {
 
 	PushPos(data data.PositionI)
 }
+
+type BufferPush interface {
+	Push(writer Buffer)
+}
+
+type BufferPull interface {
+	Pull(reader Buffer)
+}
