@@ -140,7 +140,7 @@ func (s *server) Load() {
 	})
 
 	s.watcher.SubAs(func(event impl_event.PlayerPluginMessagePullEvent) {
-		s.logging.DataF("received message on channel %s from player %s", event.Channel, event.Conn.UUID())
+		s.logging.DataF("received message on channel '%s' from player %s:%s", event.Channel, event.Conn.Name(), event.Conn.UUID())
 
 		switch event.Channel {
 		case "minecraft:brand":
