@@ -1,8 +1,13 @@
 package client
 
-import "minecraft-server/impl/base"
+import (
+	"minecraft-server/impl/base"
+	"minecraft-server/impl/mask"
+)
 
 type Relativity struct {
+	mask.Masking
+
 	X bool
 	Y bool
 	Z bool
@@ -12,25 +17,15 @@ type Relativity struct {
 }
 
 func (r *Relativity) Push(writer base.Buffer) {
-	mask := byte(0)
+	flags := byte(0)
 
-	if r.X {
-		mask |= 0x01
-	}
-	if r.Y {
-		mask |= 0x02
-	}
-	if r.Z {
-		mask |= 0x04
-	}
+	r.Set(&flags, 0x01, r.X)
+	r.Set(&flags, 0x02, r.Y)
+	r.Set(&flags, 0x04, r.Z)
 
 	// the fact that these are flipped deeply bothers me.
-	if r.AxisY {
-		mask |= 0x08
-	}
-	if r.AxisX {
-		mask |= 0x10
-	}
+	r.Set(&flags, 0x08, r.AxisY)
+	r.Set(&flags, 0x10, r.AxisX)
 
-	writer.PushByt(mask)
+	writer.PushByt(flags)
 }

@@ -4,9 +4,12 @@ import (
 	"fmt"
 
 	"minecraft-server/impl/base"
+	"minecraft-server/impl/mask"
 )
 
 type SkinParts struct {
+	mask.Masking
+
 	Cape bool
 	Head bool
 	Body bool
@@ -21,55 +24,27 @@ func (d *SkinParts) String() string {
 }
 
 func (d *SkinParts) Push(writer base.Buffer) {
-	mask := byte(0)
+	flags := byte(0)
 
-	if d.Cape {
-		mask |= 0x01
-	}
-	if d.Body {
-		mask |= 0x02
-	}
-	if d.ArmL {
-		mask |= 0x04
-	}
-	if d.ArmR {
-		mask |= 0x08
-	}
-	if d.LegL {
-		mask |= 0x10
-	}
-	if d.LegR {
-		mask |= 0x20
-	}
-	if d.Head {
-		mask |= 0x40
-	}
+	d.Set(&flags, 0x01, d.Cape)
+	d.Set(&flags, 0x02, d.Body)
+	d.Set(&flags, 0x04, d.ArmL)
+	d.Set(&flags, 0x08, d.ArmR)
+	d.Set(&flags, 0x10, d.LegL)
+	d.Set(&flags, 0x20, d.LegR)
+	d.Set(&flags, 0x40, d.Head)
 
-	writer.PushByt(mask)
+	writer.PushByt(flags)
 }
 
 func (d *SkinParts) Pull(reader base.Buffer) {
-	mask := reader.PullByt()
+	flags := reader.PullByt()
 
-	if mask&0x01 != 0 {
-		d.Cape = true
-	}
-	if mask&0x02 != 0 {
-		d.Body = true
-	}
-	if mask&0x04 != 0 {
-		d.ArmL = true
-	}
-	if mask&0x08 != 0 {
-		d.ArmR = true
-	}
-	if mask&0x10 != 0 {
-		d.LegL = true
-	}
-	if mask&0x20 != 0 {
-		d.LegR = true
-	}
-	if mask&0x40 != 0 {
-		d.Head = true
-	}
+	d.Cape = d.Has(flags, 0x01)
+	d.Body = d.Has(flags, 0x02)
+	d.ArmL = d.Has(flags, 0x04)
+	d.ArmR = d.Has(flags, 0x08)
+	d.LegL = d.Has(flags, 0x10)
+	d.LegR = d.Has(flags, 0x20)
+	d.Head = d.Has(flags, 0x40)
 }

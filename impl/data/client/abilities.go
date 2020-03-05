@@ -1,8 +1,13 @@
 package client
 
-import "minecraft-server/impl/base"
+import (
+	"minecraft-server/impl/base"
+	"minecraft-server/impl/mask"
+)
 
 type PlayerAbilities struct {
+	mask.Masking
+
 	Invulnerable bool
 	Flying       bool
 	AllowFlight  bool
@@ -12,18 +17,10 @@ type PlayerAbilities struct {
 func (p *PlayerAbilities) Push(writer base.Buffer) {
 	flags := byte(0)
 
-	if p.Invulnerable {
-		flags |= 0x01
-	}
-	if p.Flying {
-		flags |= 0x02
-	}
-	if p.AllowFlight {
-		flags |= 0x04
-	}
-	if p.InstantBuild {
-		flags |= 0x08
-	}
+	p.Set(&flags, 0x01, p.Invulnerable)
+	p.Set(&flags, 0x02, p.Flying)
+	p.Set(&flags, 0x04, p.AllowFlight)
+	p.Set(&flags, 0x08, p.InstantBuild)
 
 	writer.PushByt(flags)
 }
@@ -31,19 +28,8 @@ func (p *PlayerAbilities) Push(writer base.Buffer) {
 func (p *PlayerAbilities) Pull(reader base.Buffer) {
 	flags := reader.PullByt()
 
-	if flags&0x01 != 0 {
-		p.Invulnerable = true
-	}
-
-	if flags&0x02 != 0 {
-		p.Flying = true
-	}
-
-	if flags&0x04 != 0 {
-		p.AllowFlight = true
-	}
-
-	if flags&0x08 != 0 {
-		p.InstantBuild = true
-	}
+	p.Invulnerable = p.Has(flags, 0x01)
+	p.Flying = p.Has(flags, 0x02)
+	p.AllowFlight = p.Has(flags, 0x04)
+	p.InstantBuild = p.Has(flags, 0x08)
 }
