@@ -27,3 +27,23 @@ func (p *PlayerAbilities) Push(writer base.Buffer) {
 
 	writer.PushByt(flags)
 }
+
+func (p *PlayerAbilities) Pull(reader base.Buffer) {
+	flags := reader.PullByt()
+
+	if flags&0x01 != 0 {
+		p.Invulnerable = true
+	}
+
+	if flags&0x02 != 0 {
+		p.Flying = true
+	}
+
+	if flags&0x04 != 0 {
+		p.AllowFlight = true
+	}
+
+	if flags&0x08 != 0 {
+		p.InstantBuild = true
+	}
+}
