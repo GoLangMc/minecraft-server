@@ -95,6 +95,15 @@ func createPacketI() map[base.PacketState]map[int32]func() base.PacketI {
 			0x0F: func() base.PacketI {
 				return &states.PacketIKeepAlive{}
 			},
+			0x11: func() base.PacketI {
+				return &states.PacketIPlayerPosition{}
+			},
+			0x12: func() base.PacketI {
+				return &states.PacketIPlayerLocation{}
+			},
+			0x13: func() base.PacketI {
+				return &states.PacketIPlayerRotation{}
+			},
 			0x19: func() base.PacketI {
 				return &states.PacketIPlayerAbilities{}
 			},

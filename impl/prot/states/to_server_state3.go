@@ -148,3 +148,65 @@ func (p *PacketIPlayerAbilities) Pull(reader base.Buffer, conn base.Connection) 
 	p.FlightSpeed = reader.PullF32()
 	p.GroundSpeed = reader.PullF32()
 }
+
+type PacketIPlayerPosition struct {
+	Position data.PositionF
+	OnGround bool
+}
+
+func (p *PacketIPlayerPosition) UUID() int32 {
+	return 0x11
+}
+
+func (p *PacketIPlayerPosition) Pull(reader base.Buffer, conn base.Connection) {
+	p.Position = data.PositionF{
+		X: reader.PullF64(),
+		Y: reader.PullF64(),
+		Z: reader.PullF64(),
+	}
+
+	p.OnGround = reader.PullBit()
+}
+
+type PacketIPlayerLocation struct {
+	Location data.Location
+	OnGround bool
+}
+
+func (p *PacketIPlayerLocation) UUID() int32 {
+	return 0x12
+}
+
+func (p *PacketIPlayerLocation) Pull(reader base.Buffer, conn base.Connection) {
+	p.Location = data.Location{
+		PositionF: data.PositionF{
+			X: reader.PullF64(),
+			Y: reader.PullF64(),
+			Z: reader.PullF64(),
+		},
+		RotationF: data.RotationF{
+			AxisX: reader.PullF32(),
+			AxisY: reader.PullF32(),
+		},
+	}
+
+	p.OnGround = reader.PullBit()
+}
+
+type PacketIPlayerRotation struct {
+	Rotation data.RotationF
+	OnGround bool
+}
+
+func (p *PacketIPlayerRotation) UUID() int32 {
+	return 0x13
+}
+
+func (p *PacketIPlayerRotation) Pull(reader base.Buffer, conn base.Connection) {
+	p.Rotation = data.RotationF{
+		AxisX: reader.PullF32(),
+		AxisY: reader.PullF32(),
+	}
+
+	p.OnGround = reader.PullBit()
+}
