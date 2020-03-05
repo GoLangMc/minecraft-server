@@ -267,6 +267,10 @@ func (s *server) PlayerByConn(conn impl_base.Connection) ents.Player {
 	return s.PlayerByUUID(uuid)
 }
 
+func (s *server) ServerVersion() string {
+	return "0.0.1-SNAPSHOT"
+}
+
 func (s *server) stopServerCommand(sender ents.Sender, params []string) {
 	if _, ok := sender.(*cons.Console); !ok {
 		s.logging.FailF("non console sender %s tried to stop the server", sender.Name())

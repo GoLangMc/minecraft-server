@@ -33,6 +33,8 @@ type Server interface {
 	PlayerByUUID(uuid uuid.UUID) ents.Player
 
 	PlayerByConn(conn impl_base.Connection) ents.Player
+
+	ServerVersion() string
 }
 
 var instance *Server
