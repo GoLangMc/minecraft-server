@@ -10,6 +10,7 @@ import (
 	"minecraft-server/apis/task"
 	"minecraft-server/apis/util"
 	"minecraft-server/impl/base"
+	"minecraft-server/impl/data/client"
 	"minecraft-server/impl/data/plugin"
 	"minecraft-server/impl/data/values"
 	"minecraft-server/impl/prot/states"
@@ -85,12 +86,14 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 			})
 
 			conn.SendPacket(&states.PacketOPlayerAbilities{
-				Invulnerable: true,
-				Flying:       true,
-				AllowFlight:  true,
-				InstantBuild: false,
-				FlyingSpeed:  0.05, // default value
-				FieldOfView:  0.1,  // default value
+				Abilities: client.PlayerAbilities{
+					Invulnerable: true,
+					Flying:       true,
+					AllowFlight:  true,
+					InstantBuild: false,
+				},
+				FlyingSpeed: 0.05, // default value
+				FieldOfView: 0.1,  // default value
 			})
 
 			/*

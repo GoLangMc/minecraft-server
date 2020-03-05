@@ -4,6 +4,7 @@ import (
 	"minecraft-server/apis/data"
 	"minecraft-server/apis/game"
 	"minecraft-server/impl/base"
+	"minecraft-server/impl/data/client"
 	"minecraft-server/impl/data/plugin"
 )
 
@@ -126,12 +127,9 @@ func (p *PacketOServerDifficulty) Push(writer base.Buffer, conn base.Connection)
 }
 
 type PacketOPlayerAbilities struct {
-	Invulnerable bool
-	Flying       bool
-	AllowFlight  bool
-	InstantBuild bool // creative??
-	FlyingSpeed  float32
-	FieldOfView  float32
+	Abilities   client.PlayerAbilities
+	FlyingSpeed float32
+	FieldOfView float32
 }
 
 func (p *PacketOPlayerAbilities) UUID() int32 {
@@ -139,22 +137,8 @@ func (p *PacketOPlayerAbilities) UUID() int32 {
 }
 
 func (p *PacketOPlayerAbilities) Push(writer base.Buffer, conn base.Connection) {
-	flags := byte(0)
+	p.Abilities.Push(writer)
 
-	if p.Invulnerable {
-		flags |= 1
-	}
-	if p.Flying {
-		flags |= 2
-	}
-	if p.AllowFlight {
-		flags |= 3
-	}
-	if p.InstantBuild {
-		flags |= 4
-	}
-
-	writer.PushByt(flags)
 	writer.PushF32(p.FlyingSpeed)
 	writer.PushF32(p.FieldOfView)
 }
