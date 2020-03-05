@@ -57,7 +57,7 @@ func (p *PacketOJoinGame) Push(writer base.Buffer, conn base.Connection) {
 }
 
 type PacketOPluginMessage struct {
-	Message plugin.PluginMessage
+	Message plugin.Message
 }
 
 func (p *PacketOPluginMessage) UUID() int32 {
@@ -66,7 +66,7 @@ func (p *PacketOPluginMessage) UUID() int32 {
 
 func (p *PacketOPluginMessage) Push(writer base.Buffer, conn base.Connection) {
 	writer.PushTxt(p.Message.Chan())
-	p.Message.Data(writer, conn)
+	p.Message.Push(writer)
 }
 
 type PacketOPlayerPositionAndLook struct {
