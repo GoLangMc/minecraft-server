@@ -7,7 +7,7 @@ import (
 	"github.com/fatih/color"
 )
 
-type colorCode int
+type ChatColor int
 
 type ColorCode struct {
 	Chat string
@@ -19,7 +19,7 @@ type ColorCode struct {
 }
 
 const (
-	DarkRed colorCode = iota
+	DarkRed ChatColor = iota
 	Red
 
 	Gold
@@ -54,7 +54,7 @@ const (
 const ColorCChar = '§'
 const ColorAChar = '&'
 
-var codeToCode = map[colorCode]*ColorCode{
+var codeToCode = map[ChatColor]*ColorCode{
 	DarkRed: {
 		Chat: `§4`,
 		Motd: `\u00A74`,
@@ -198,7 +198,7 @@ var codeToCode = map[colorCode]*ColorCode{
 		Json: `reset`,
 	},
 }
-var codeToForm = map[colorCode]color.Attribute{
+var codeToForm = map[ChatColor]color.Attribute{
 	DarkRed:    color.FgHiRed,
 	Red:        color.FgRed,
 	Gold:       color.FgYellow,
@@ -224,7 +224,7 @@ var codeToForm = map[colorCode]color.Attribute{
 	Italic:        color.Italic,
 }
 
-var charToCode = map[rune]colorCode{
+var charToCode = map[rune]ChatColor{
 	'4': DarkRed,
 	'c': Red,
 	'6': Gold,
@@ -256,7 +256,7 @@ var charToCode = map[rune]colorCode{
 	'r': Reset,
 }
 
-var jsonToCode = map[string]colorCode{
+var jsonToCode = map[string]ChatColor{
 	`dark_red`: DarkRed,
 	`red`:      Red,
 	`gold`:     Gold,
@@ -288,20 +288,20 @@ var jsonToCode = map[string]colorCode{
 	`reset`:         Reset,
 }
 
-func (code colorCode) String() string {
+func (code ChatColor) String() string {
 	return codeToCode[code].Chat
 }
 
-func (code *colorCode) MarshalJSON() ([]byte, error) {
+func (code *ChatColor) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + codeToCode[*code].Json + `"`), nil
 }
 
-func (code *colorCode) UnmarshalJSON(bytes []byte) error {
+func (code *ChatColor) UnmarshalJSON(bytes []byte) error {
 	*code = jsonToCode[string(bytes)]
 	return nil
 }
 
-func (code *colorCode) On(text string) string {
+func (code *ChatColor) On(text string) string {
 	if len(text) == 0 {
 		return ""
 	}

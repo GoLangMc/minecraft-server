@@ -1,8 +1,10 @@
-package data
+package msg
 
 import (
 	"encoding/json"
 	"strings"
+
+	"minecraft-server/apis/data"
 )
 
 type MessagePosition byte
@@ -14,8 +16,8 @@ const (
 )
 
 type Message struct {
-	Text  string     `json:"text"`
-	Color *colorCode `json:"color,string,omitempty"`
+	Text  string          `json:"text"`
+	Color *data.ChatColor `json:"color,string,omitempty"`
 
 	Bold          *bool `json:"bold,boolean,omitempty"`
 	Italic        *bool `json:"italic,boolean,omitempty"`
@@ -28,55 +30,55 @@ type Message struct {
 	head *Message
 }
 
-func NewMessage(text string) Message {
-	return Message{
+func New(text string) *Message {
+	return &Message{
 		Text: text,
 	}
 }
 
-func (c Message) SetColor(code colorCode) Message {
+func (c *Message) SetColor(code data.ChatColor) *Message {
 	c.Color = &code
 	return c
 }
 
-func (c Message) SetBold(value bool) Message {
+func (c *Message) SetBold(value bool) *Message {
 	c.Bold = &value
 	return c
 }
 
-func (c Message) SetItalic(value bool) Message {
+func (c *Message) SetItalic(value bool) *Message {
 	c.Italic = &value
 	return c
 }
 
-func (c Message) SetUnderlined(value bool) Message {
+func (c *Message) SetUnderlined(value bool) *Message {
 	c.Underlined = &value
 	return c
 }
 
-func (c Message) SetStrikethrough(value bool) Message {
+func (c *Message) SetStrikethrough(value bool) *Message {
 	c.Strikethrough = &value
 	return c
 }
 
-func (c Message) SetObfuscated(value bool) Message {
+func (c *Message) SetObfuscated(value bool) *Message {
 	c.Obfuscated = &value
 	return c
 }
 
 // creates and returns a new Chat object, and adds it to the caller's extra slice
-func (c Message) Add(text string) Message {
-	chat := NewMessage(text)
-	chat.head = &c
+func (c *Message) Add(text string) *Message {
+	chat := New(text)
+	chat.head = c
 
-	c.Extra = append(c.Extra, &chat)
+	c.Extra = append(c.Extra, chat)
 
 	return chat
 }
 
-func (c Message) Reset() Message {
+func (c *Message) Reset() *Message {
 
-	next := c.Add("").SetColor(Reset)
+	next := c.Add("").SetColor(data.Reset)
 
 	if c.Bold != nil && *c.Bold == true {
 		next.SetBold(false)
@@ -138,23 +140,23 @@ func (c *Message) asText() string {
 	}
 
 	if c.Bold != nil && *c.Bold == true {
-		builder.WriteString(Bold.String())
+		builder.WriteString(data.Bold.String())
 	}
 
 	if c.Italic != nil && *c.Italic == true {
-		builder.WriteString(Italic.String())
+		builder.WriteString(data.Italic.String())
 	}
 
 	if c.Underlined != nil && *c.Underlined == true {
-		builder.WriteString(Underline.String())
+		builder.WriteString(data.Underline.String())
 	}
 
 	if c.Strikethrough != nil && *c.Strikethrough == true {
-		builder.WriteString(Strikethrough.String())
+		builder.WriteString(data.Strikethrough.String())
 	}
 
 	if c.Obfuscated != nil && *c.Obfuscated == true {
-		builder.WriteString(Obfuscated.String())
+		builder.WriteString(data.Obfuscated.String())
 	}
 
 	builder.WriteString(c.Text)
@@ -168,8 +170,4 @@ func (c *Message) asText() string {
 
 func (c *Message) String() string {
 	return c.AsJson()
-}
-
-func ConvertOld(text string) *Message {
-	panic('d')
 }

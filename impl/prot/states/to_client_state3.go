@@ -2,6 +2,7 @@ package states
 
 import (
 	"minecraft-server/apis/data"
+	"minecraft-server/apis/data/msg"
 	"minecraft-server/apis/game"
 	"minecraft-server/impl/base"
 	"minecraft-server/impl/data/client"
@@ -9,8 +10,8 @@ import (
 )
 
 type PacketOChatMessage struct {
-	Message         data.Message
-	MessagePosition data.MessagePosition
+	Message         msg.Message
+	MessagePosition msg.MessagePosition
 }
 
 func (p *PacketOChatMessage) UUID() int32 {
@@ -20,8 +21,8 @@ func (p *PacketOChatMessage) UUID() int32 {
 func (p *PacketOChatMessage) Push(writer base.Buffer, conn base.Connection) {
 	message := p.Message
 
-	if p.MessagePosition == data.HotBarText {
-		message = data.NewMessage(message.AsText())
+	if p.MessagePosition == msg.HotBarText {
+		message = *msg.New(message.AsText())
 	}
 
 	writer.PushTxt(message.AsJson())

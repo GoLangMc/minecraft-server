@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"minecraft-server/apis/data"
+	"minecraft-server/apis/data/msg"
 	"minecraft-server/apis/util"
 	"minecraft-server/apis/uuid"
 	"minecraft-server/impl/base"
@@ -37,7 +38,7 @@ func HandleState2(watcher util.Watcher, join chan base.PlayerAndConnection) {
 		defer func() {
 			if err := recover(); err != nil {
 				conn.SendPacket(&states.PacketODisconnect{
-					Reason: data.NewMessage(fmt.Sprintf("Authentication failed: %v", err)).SetColor(data.Red),
+					Reason: *msg.New(fmt.Sprintf("Authentication failed: %v", err)).SetColor(data.Red),
 				})
 			}
 		}()
@@ -62,7 +63,7 @@ func HandleState2(watcher util.Watcher, join chan base.PlayerAndConnection) {
 			defer func() {
 				if err := recover(); err != nil {
 					conn.SendPacket(&states.PacketODisconnect{
-						Reason: data.NewMessage(fmt.Sprintf("Authentication failed: %v", err)).SetColor(data.Red),
+						Reason: *msg.New(fmt.Sprintf("Authentication failed: %v", err)).SetColor(data.Red),
 					})
 				}
 			}()

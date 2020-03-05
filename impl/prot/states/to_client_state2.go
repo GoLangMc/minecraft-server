@@ -1,14 +1,14 @@
 package states
 
 import (
-	"minecraft-server/apis/data"
+	"minecraft-server/apis/data/msg"
 	"minecraft-server/impl/base"
 )
 
 // done
 
 type PacketODisconnect struct {
-	Reason data.Message
+	Reason msg.Message
 }
 
 func (p *PacketODisconnect) UUID() int32 {
