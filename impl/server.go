@@ -10,7 +10,7 @@ import (
 
 	"minecraft-server/apis"
 	"minecraft-server/apis/cmds"
-	"minecraft-server/apis/data"
+	"minecraft-server/apis/data/chat"
 	"minecraft-server/apis/ents"
 	"minecraft-server/apis/logs"
 	"minecraft-server/apis/task"
@@ -176,11 +176,11 @@ func (s *server) Load() {
 
 				if err != nil {
 					s.logging.Fail(
-						data.Red, "failed to evaluate ",
-						data.DarkGray, "`",
-						data.White, (*command).Name(),
-						data.DarkGray, "`",
-						data.Red, ": ", err.Error()[8:])
+						chat.Red, "failed to evaluate ",
+						chat.DarkGray, "`",
+						chat.White, (*command).Name(),
+						chat.DarkGray, "`",
+						chat.Red, ": ", err.Error()[8:])
 				}
 
 				continue
@@ -204,7 +204,7 @@ func (s *server) Kill() {
 	s.message <- system.Make(system.STOP, "normal stop")
 	close(s.message)
 
-	s.logging.Info(data.DarkRed, "server stopped")
+	s.logging.Info(chat.DarkRed, "server stopped")
 }
 
 func (s *server) Wait() {
@@ -308,7 +308,7 @@ func (s *server) stopServerCommand(sender ents.Sender, params []string) {
 	} else {
 
 		// inform future shutdown
-		s.logging.Warn(data.Gold, "stopping server in ", data.Green, util.FormatTime(after))
+		s.logging.Warn(chat.Gold, "stopping server in ", chat.Green, util.FormatTime(after))
 
 		// schedule shutdown {after} seconds later
 		s.tasking.AfterTime(after, time.Second, func(task *task.Task) {

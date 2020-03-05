@@ -9,7 +9,7 @@ import (
 	"github.com/fatih/color"
 
 	"minecraft-server/apis/base"
-	"minecraft-server/apis/data"
+	"minecraft-server/apis/data/chat"
 )
 
 type LogLevel int
@@ -39,7 +39,7 @@ func (log *Logging) Show() []LogLevel {
 }
 
 func (log *Logging) formatPrint(level, message string) {
-	_, _ = fmt.Fprint(log.writer, fmt.Sprintf("[%s] [%s] [%s] %s\n", color.HiGreenString(currentTimeAsText()), level, color.WhiteString(log.Name()), data.TranslateConsole(message)))
+	_, _ = fmt.Fprint(log.writer, fmt.Sprintf("[%s] [%s] [%s] %s\n", color.HiGreenString(currentTimeAsText()), level, color.WhiteString(log.Name()), chat.TranslateConsole(message)))
 }
 
 func (log *Logging) info(message string) {

@@ -1,7 +1,7 @@
 package ents
 
 import (
-	"minecraft-server/apis/data/msg"
+	"minecraft-server/apis/data/msgs"
 	"minecraft-server/impl/prot/states"
 
 	apis_base "minecraft-server/apis/base"
@@ -26,8 +26,8 @@ func NewPlayer() player {
 
 func (p *player) SendMessage(message ...interface{}) {
 	packet := states.PacketOChatMessage{
-		Message:         *msg.New(apis_base.ConvertToString(message...)),
-		MessagePosition: msg.NormalChat,
+		Message:         *msgs.New(apis_base.ConvertToString(message...)),
+		MessagePosition: msgs.NormalChat,
 	}
 
 	p.conn.SendPacket(&packet)

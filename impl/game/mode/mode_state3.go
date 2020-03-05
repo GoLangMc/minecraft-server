@@ -6,7 +6,8 @@ import (
 
 	"minecraft-server/apis"
 	"minecraft-server/apis/data"
-	"minecraft-server/apis/data/msg"
+	"minecraft-server/apis/data/chat"
+	"minecraft-server/apis/data/msgs"
 	"minecraft-server/apis/game"
 	"minecraft-server/apis/logs"
 	"minecraft-server/apis/task"
@@ -63,11 +64,11 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 		api := apis.MinecraftServer()
 
 		who := api.PlayerByConn(conn)
-		out := msg.
-			New(who.Name()).SetColor(data.White).
-			Add(":").SetColor(data.Gray).
+		out := msgs.
+			New(who.Name()).SetColor(chat.White).
+			Add(":").SetColor(chat.Gray).
 			Add(" ").
-			Add(data.Translate(packet.Message)).SetColor(data.White).
+			Add(chat.Translate(packet.Message)).SetColor(chat.White).
 			AsText() // why not just use translate?
 
 		api.Broadcast(out)
@@ -92,7 +93,7 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 
 			conn.SendPacket(&states.PacketOPluginMessage{
 				Message: &plugin.Brand{
-					Name: data.Translate(fmt.Sprintf("&b%s&r &a%s&r", "GoLangMc", apis.MinecraftServer().ServerVersion())),
+					Name: chat.Translate(fmt.Sprintf("&b%s&r &a%s&r", "GoLangMc", apis.MinecraftServer().ServerVersion())),
 				},
 			})
 

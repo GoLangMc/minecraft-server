@@ -1,6 +1,9 @@
 package status
 
-import "minecraft-server/apis/data"
+import (
+	"minecraft-server/apis/data"
+	"minecraft-server/apis/data/chat"
+)
 
 const (
 	SxtannaName = "Sxtanna"
@@ -54,7 +57,7 @@ func DefaultResponse() Response {
 			},
 		},
 		Description: Message{
-			Text: data.Translate(ServerMotd),
+			Text: chat.Translate(ServerMotd),
 		},
 		Favicon: ServerIcon,
 	}
