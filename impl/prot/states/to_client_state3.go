@@ -28,14 +28,16 @@ func (p *PacketOChatMessage) Push(writer base.Buffer, conn base.Connection) {
 }
 
 type PacketOJoinGame struct {
-	EntityID    int32
-	Hardcore    bool
-	GameMode    game.GameMode
-	Dimension   game.Dimension
-	Difficulty  game.Difficulty
-	MaxPlayers  int
-	LevelType   game.LevelType
-	ReduceDebug bool
+	EntityID      int32
+	Hardcore      bool
+	GameMode      game.GameMode
+	Dimension     game.Dimension
+	HashedSeed    int64
+	Difficulty    game.Difficulty
+	MaxPlayers    int
+	LevelType     game.LevelType
+	ReduceDebug   bool
+	RespawnScreen bool
 }
 
 func (p *PacketOJoinGame) UUID() int32 {
@@ -46,10 +48,12 @@ func (p *PacketOJoinGame) Push(writer base.Buffer, conn base.Connection) {
 	writer.PushI32(p.EntityID)
 	writer.PushByt(p.GameMode.Encoded(p.Hardcore /* pull this value from somewhere */))
 	writer.PushI32(int32(p.Dimension))
+	writer.PushI64(p.HashedSeed)
 	writer.PushByt(uint8(p.MaxPlayers))
 	writer.PushTxt(p.LevelType.String())
 	writer.PushVrI(12)
 	writer.PushBit(p.ReduceDebug)
+	writer.PushBit(p.RespawnScreen)
 }
 
 type PacketOPluginMessage struct {

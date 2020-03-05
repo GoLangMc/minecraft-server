@@ -4,10 +4,12 @@ import (
 	"time"
 
 	"minecraft-server/apis"
+	"minecraft-server/apis/game"
 	"minecraft-server/apis/logs"
 	"minecraft-server/apis/task"
 	"minecraft-server/apis/util"
 	"minecraft-server/impl/base"
+	"minecraft-server/impl/data/values"
 	"minecraft-server/impl/prot/states"
 
 	impl_event "minecraft-server/impl/game/event"
@@ -36,16 +38,20 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 		for conn := range join {
 			apis.MinecraftServer().Watcher().PubAs(impl_event.PlayerConnJoinEvent{Conn: conn})
 
-			/*conn.SendPacket(&states.PacketOJoinGame{
-				EntityID:    0,
-				Hardcore:    false,
-				GameMode:    game.CREATIVE,
-				Dimension:   game.OVERWORLD,
-				Difficulty:  game.PEACEFUL,
-				MaxPlayers:  10,
-				LevelType:   game.DEFAULT,
-				ReduceDebug: false,
-			})*/
+			conn.SendPacket(&states.PacketOJoinGame{
+				EntityID:  0,
+				Hardcore:  false,
+				GameMode:  game.CREATIVE,
+				Dimension: game.OVERWORLD,
+
+				HashedSeed: values.DefaultWorldHashedSeed,
+
+				Difficulty:    game.PEACEFUL,
+				MaxPlayers:    10,
+				LevelType:     game.DEFAULT,
+				ReduceDebug:   false,
+				RespawnScreen: false,
+			})
 
 			/*conn.SendPacket(&states.PacketOPluginMessage{
 				Message: &plugin.Brand{
