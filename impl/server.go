@@ -143,7 +143,7 @@ func (s *server) Load() {
 		s.logging.DataF("received message on channel '%s' from player %s:%s", event.Channel, event.Conn.Name(), event.Conn.UUID())
 
 		switch event.Channel {
-		case "minecraft:brand":
+		case plugin.CHANNEL_BRAND:
 			s.logging.DataF("their client's brand is '%s'", event.Message.(*plugin.Brand).Name)
 		}
 	})

@@ -45,6 +45,12 @@ func GetMessageForChannel(channel string) Message {
 	return creator()
 }
 
+const (
+	CHANNEL_BRAND           = "minecraft:brand"
+	CHANNEL_DEBUG_PATHS     = "minecraft:debug/paths"
+	CHANNEL_DEBUG_NEIGHBORS = "minecraft:debug/neighbors_update"
+)
+
 // look, they're like cute little packets :D
 
 type Brand struct {
@@ -52,7 +58,7 @@ type Brand struct {
 }
 
 func (b *Brand) Chan() string {
-	return "minecraft:brand"
+	return CHANNEL_BRAND
 }
 
 func (b *Brand) Push(writer base.Buffer) {
@@ -200,7 +206,7 @@ const (
 )
 
 func (d *DebugPaths) Chan() string {
-	return "minecraft:debug/paths"
+	return CHANNEL_DEBUG_PATHS
 }
 
 func (d *DebugPaths) Push(writer base.Buffer) {
@@ -225,7 +231,7 @@ type DebugNeighbors struct {
 }
 
 func (d *DebugNeighbors) Chan() string {
-	return "minecraft:debug/neighbors_update"
+	return CHANNEL_DEBUG_NEIGHBORS
 }
 
 func (d *DebugNeighbors) Push(writer base.Buffer) {
