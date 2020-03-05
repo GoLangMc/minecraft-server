@@ -70,32 +70,26 @@ func (p *PacketOPluginMessage) Push(writer base.Buffer, conn base.Connection) {
 	p.Message.Push(writer)
 }
 
-type PacketOPlayerPositionAndLook struct {
-	X float64
-	Y float64
-	Z float64
-
-	Yaw   float32
-	Pitch float32
-
-	Flags byte
+type PacketOPlayerLocation struct {
+	Location data.Location
+	Relative client.Relativity
 
 	ID int32
 }
 
-func (p *PacketOPlayerPositionAndLook) UUID() int32 {
+func (p *PacketOPlayerLocation) UUID() int32 {
 	return 0x36
 }
 
-func (p *PacketOPlayerPositionAndLook) Push(writer base.Buffer, conn base.Connection) {
-	writer.PushF64(p.X)
-	writer.PushF64(p.Y)
-	writer.PushF64(p.Z)
+func (p *PacketOPlayerLocation) Push(writer base.Buffer, conn base.Connection) {
+	writer.PushF64(p.Location.X)
+	writer.PushF64(p.Location.Y)
+	writer.PushF64(p.Location.Z)
 
-	writer.PushF32(p.Yaw)
-	writer.PushF32(p.Pitch)
+	writer.PushF32(p.Location.AxisX)
+	writer.PushF32(p.Location.AxisY)
 
-	writer.PushByt(p.Flags)
+	p.Relative.Push(writer)
 
 	writer.PushVrI(p.ID)
 }

@@ -103,14 +103,20 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 
 			conn.SendPacket(&states.PacketODeclareRecipes{})
 
-			conn.SendPacket(&states.PacketOPlayerPositionAndLook{
-				X:     0,
-				Y:     100,
-				Z:     0,
-				Yaw:   0,
-				Pitch: 0,
-				Flags: 0,
-				ID:    0,
+			conn.SendPacket(&states.PacketOPlayerLocation{
+				ID: 0,
+				Location: data.Location{
+					PositionF: data.PositionF{
+						X: 0,
+						Y: 100,
+						Z: 0,
+					},
+					RotationF: data.RotationF{
+						AxisX: 0,
+						AxisY: 0,
+					},
+				},
+				Relative: client.Relativity{},
 			})
 		}
 	}()
