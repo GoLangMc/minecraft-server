@@ -77,11 +77,17 @@ func createPacketI() map[base.PacketState]map[int32]func() base.PacketI {
 			0x01: func() base.PacketI {
 				return &states.PacketIQueryBlockNBT{}
 			},
-			0x0F: func() base.PacketI {
-				return &states.PacketIKeepAlive{}
+			0x02: func() base.PacketI {
+				return &states.PacketISetDifficulty{}
 			},
 			0x03: func() base.PacketI {
 				return &states.PacketIChatMessage{}
+			},
+			0x0B: func() base.PacketI {
+				return &states.PacketIPluginMessage{}
+			},
+			0x0F: func() base.PacketI {
+				return &states.PacketIKeepAlive{}
 			},
 		},
 	}
