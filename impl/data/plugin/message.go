@@ -5,8 +5,8 @@ import "minecraft-server/impl/base"
 type Message interface {
 	Chan() string
 
-	Push(writer base.Buffer)
-	Pull(reader base.Buffer)
+	base.BufferPush
+	base.BufferPull
 }
 
 var registry = createMessageRegistry()
