@@ -116,6 +116,13 @@ func (s *server) Load() {
 
 		sender.SendMessage(util.FormatTime(seconds))
 	})
+	s.command.Register("send", func(sender ents.Sender, params []string) {
+		message := strings.Join(params, " ")
+
+		for _, player := range s.Players() {
+			player.SendMessage(message)
+		}
+	})
 
 	s.watcher.SubAs(func(event apis_event.PlayerJoinEvent) {
 		s.logging.InfoF("player %s logged in with uuid:%v", event.Player.Name(), event.Player.UUID())
