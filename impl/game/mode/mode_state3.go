@@ -96,16 +96,21 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 				FieldOfView: 0.1,  // default value
 			})
 
-			/*
-				conn.SendPacket(&states.PacketOPlayerPositionAndLook{
-					X:     0,
-					Y:     100,
-					Z:     0,
-					Yaw:   0,
-					Pitch: 0,
-					Flags: 0,
-					ID:    0,
-				})*/
+			conn.SendPacket(&states.PacketOHeldItemChange{
+				Slot: client.SLOT_0,
+			})
+
+			conn.SendPacket(&states.PacketODeclareRecipes{})
+
+			conn.SendPacket(&states.PacketOPlayerPositionAndLook{
+				X:     0,
+				Y:     100,
+				Z:     0,
+				Yaw:   0,
+				Pitch: 0,
+				Flags: 0,
+				ID:    0,
+			})
 		}
 	}()
 
