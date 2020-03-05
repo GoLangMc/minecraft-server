@@ -1,6 +1,7 @@
 package mode
 
 import (
+	"fmt"
 	"time"
 
 	"minecraft-server/apis"
@@ -76,7 +77,7 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 
 			conn.SendPacket(&states.PacketOPluginMessage{
 				Message: &plugin.Brand{
-					Name: data.Translate("&b&lGo&2&lMC&r"),
+					Name: data.Translate(fmt.Sprintf("&b%s&r &a%s&r", "GoLangMc", apis.MinecraftServer().ServerVersion())),
 				},
 			})
 
