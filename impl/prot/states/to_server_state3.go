@@ -102,3 +102,29 @@ func (p *PacketIClientStatus) UUID() int32 {
 func (p *PacketIClientStatus) Pull(reader base.Buffer, conn base.Connection) {
 	p.Action = client.StatusAction(reader.PullVrI())
 }
+
+type PacketIClientSettings struct {
+	Locale       string
+	ViewDistance byte
+	ChatMode     client.ChatMode
+	ChatColors   bool // if false, strip messages of colors before sending
+	SkinParts    client.SkinParts
+	MainHand     client.MainHand
+}
+
+func (p *PacketIClientSettings) UUID() int32 {
+	return 0x05
+}
+
+func (p *PacketIClientSettings) Pull(reader base.Buffer, conn base.Connection) {
+	p.Locale = reader.PullTxt()
+	p.ViewDistance = reader.PullByt()
+	p.ChatMode = client.ChatMode(reader.PullVrI())
+	p.ChatColors = reader.PullBit()
+
+	parts := client.SkinParts{}
+	parts.Pull(reader)
+
+	p.SkinParts = parts
+	p.MainHand = client.MainHand(reader.PullVrI())
+}
