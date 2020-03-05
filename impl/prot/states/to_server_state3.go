@@ -4,6 +4,7 @@ import (
 	"minecraft-server/apis/data"
 	"minecraft-server/apis/game"
 	"minecraft-server/impl/base"
+	"minecraft-server/impl/data/plugin"
 )
 
 type PacketIKeepAlive struct {
@@ -66,4 +67,25 @@ func (p *PacketISetDifficulty) UUID() int32 {
 
 func (p *PacketISetDifficulty) Pull(reader base.Buffer, conn base.Connection) {
 	p.Difficult = game.DifficultyValueOf(reader.PullByt())
+}
+
+type PacketIPluginMessage struct {
+	Message plugin.Message
+}
+
+func (p *PacketIPluginMessage) UUID() int32 {
+	return 0x0B
+}
+
+func (p *PacketIPluginMessage) Pull(reader base.Buffer, conn base.Connection) {
+	channel := reader.PullTxt()
+	message := plugin.GetMessageForChannel(channel)
+
+	if message == nil {
+		return // log unregistered channel?
+	}
+
+	message.Pull(reader)
+
+	p.Message = message
 }
