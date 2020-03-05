@@ -11,10 +11,3 @@ type PositionF struct {
 	Y float64
 	Z float64
 }
-
-type Location struct {
-	PositionF
-
-	Yaw   float32
-	Pitch float32
-}
