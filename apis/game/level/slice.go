@@ -5,7 +5,7 @@ import "minecraft-server/impl/base"
 type Slice interface {
 	base.BufferPush
 
-	SliceY() int
+	Index() int
 
 	Chunk() Chunk
 	Level() Level
