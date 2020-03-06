@@ -1,13 +1,10 @@
 package ents
 
-import (
-	"github.com/satori/go.uuid"
-)
+import "minecraft-server/apis/base"
 
 type Entity interface {
 	Sender
-
-	UUID() uuid.UUID
+	base.Unique
 
 	EntityUUID() int64
 }
