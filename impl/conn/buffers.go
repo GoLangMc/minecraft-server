@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"minecraft-server/apis/data"
+	"minecraft-server/apis/data/tags"
 	"minecraft-server/impl/base"
 )
 
@@ -148,6 +149,10 @@ func (b *buffer) PullPos() data.PositionI {
 	}
 }
 
+func (b *buffer) PullNbt() tags.Nbt {
+	panic("implement me")
+}
+
 // push
 func (b *buffer) PushBit(data bool) {
 	if data {
@@ -247,6 +252,10 @@ func (b *buffer) PushSAS(data []int8, prefixWithLen bool) {
 
 func (b *buffer) PushPos(data data.PositionI) {
 	b.PushI64(((data.X & 0x3FFFFFF) << 38) | ((data.Z & 0x3FFFFFF) << 12) | (data.Y & 0xFFF))
+}
+
+func (b *buffer) PushNbt(data tags.Nbt) {
+	panic("implement me")
 }
 
 // internal

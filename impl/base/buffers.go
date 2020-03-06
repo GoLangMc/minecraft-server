@@ -2,6 +2,7 @@ package base
 
 import (
 	"minecraft-server/apis/data"
+	"minecraft-server/apis/data/tags"
 )
 
 type Buffer interface {
@@ -52,6 +53,8 @@ type Buffer interface {
 
 	PullPos() data.PositionI
 
+	PullNbt() tags.Nbt
+
 	// push
 	PushBit(data bool)
 
@@ -78,6 +81,8 @@ type Buffer interface {
 	PushSAS(data []int8, prefixWithLen bool)
 
 	PushPos(data data.PositionI)
+
+	PushNbt(data tags.Nbt)
 }
 
 type BufferPush interface {
