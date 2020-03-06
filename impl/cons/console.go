@@ -50,15 +50,13 @@ func (c *Console) Load() {
 		scanner := bufio.NewScanner(*c.i)
 
 		for scanner.Scan() {
-			func() {
-				defer func() {
-					if err := recover(); err != nil {
-						c.report <- system.Make(system.FAIL, err)
-					}
-				}()
-
+			err := base.Attempt(func() {
 				c.IChannel <- scanner.Text()
-			}()
+			})
+
+			if err != nil {
+				c.report <- system.Make(system.FAIL, err)
+			}
 		}
 	}()
 
