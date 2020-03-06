@@ -2,10 +2,14 @@ package event
 
 import "minecraft-server/apis/ents"
 
+type PlayerEvent struct {
+	ents.Player
+}
+
 type PlayerJoinEvent struct {
-	Player ents.Player
+	PlayerEvent
 }
 
 type PlayerQuitEvent struct {
-	Player ents.Player
+	PlayerEvent
 }

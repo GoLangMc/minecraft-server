@@ -246,13 +246,13 @@ func (s *server) loadServer() {
 	s.watcher.SubAs(func(event impl_event.PlayerConnJoinEvent) {
 		s.players.addData(event.Conn)
 
-		s.watcher.PubAs(apis_event.PlayerJoinEvent{Player: event.Conn.Player})
+		s.watcher.PubAs(apis_event.PlayerJoinEvent{PlayerEvent: apis_event.PlayerEvent{Player: event.Conn.Player}})
 	})
 	s.watcher.SubAs(func(event impl_event.PlayerConnQuitEvent) {
 		player := s.players.playerByConn(event.Conn.Connection)
 
 		if player != nil {
-			s.watcher.PubAs(apis_event.PlayerQuitEvent{Player: player})
+			s.watcher.PubAs(apis_event.PlayerQuitEvent{PlayerEvent: apis_event.PlayerEvent{Player: player}})
 		}
 
 		s.players.delData(event.Conn)
