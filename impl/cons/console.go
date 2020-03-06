@@ -11,8 +11,8 @@ import (
 )
 
 type Console struct {
-	i *io.Reader
-	o *io.Writer
+	i io.Reader
+	o io.Writer
 
 	logger *logs.Logging
 
@@ -23,31 +23,25 @@ type Console struct {
 }
 
 func NewConsole(report chan system.Message) *Console {
-	file, err := os.OpenFile("latest.log", os.O_CREATE|os.O_APPEND|os.O_RDWR, 0666)
-	if err != nil {
-		report <- system.Make(system.FAIL, err)
-		return nil
-	}
-
-	i := io.MultiReader(os.Stdin)
-	o := io.MultiWriter(os.Stdout, file)
-
-	return &Console{
-		i: &i,
-		o: &o,
-
+	console := &Console{
 		IChannel: make(chan string),
 		OChannel: make(chan string),
 
 		report: report,
-		logger: logs.NewLoggingWith("console", o, logs.EveryLevel...),
 	}
+
+	console.i = io.MultiReader(os.Stdin)
+	console.o = io.MultiWriter(os.Stdout, console.newLogFile("latest.log"))
+
+	console.logger = logs.NewLoggingWith("console", console.o, logs.EveryLevel...)
+
+	return console
 }
 
 func (c *Console) Load() {
 	// handle i channel
 	go func() {
-		scanner := bufio.NewScanner(*c.i)
+		scanner := bufio.NewScanner(c.i)
 
 		for scanner.Scan() {
 			err := base.Attempt(func() {
@@ -73,6 +67,8 @@ func (c *Console) Kill() {
 		_ = recover() // ignore panic with closing closed channel
 	}()
 
+	// save the log file as YYYY-MM-DD-{index}.log{.gz optionally compressed}
+
 	close(c.IChannel)
 	close(c.OChannel)
 }
@@ -89,4 +85,25 @@ func (c *Console) SendMessage(message ...interface{}) {
 	}()
 
 	c.OChannel <- base.ConvertToString(message...)
+}
+
+type logFileWriter struct {
+	file *os.File
+}
+
+func (c *Console) newLogFile(name string) io.Writer {
+	file, err := os.Create(name)
+	if err != nil {
+		c.report <- system.Make(system.FAIL, err)
+		return nil
+	}
+
+	return &logFileWriter{file: file}
+}
+
+func (l *logFileWriter) Write(p []byte) (n int, err error) {
+
+	// this is going to be messy, but this should convert to string, strip colors, and then write to file. Don't @ me.
+
+	return l.file.Write(p)
 }
