@@ -197,3 +197,21 @@ func (p *PacketOChunkData) Push(writer base.Buffer, conn base.Connection) {
 	// write block entities
 	writer.PushVrI(0)
 }
+
+type PacketOPlayerInfo struct {
+	Action client.PlayerInfoAction
+	Values []client.PlayerInfo
+}
+
+func (p *PacketOPlayerInfo) UUID() int32 {
+	return 0x34
+}
+
+func (p *PacketOPlayerInfo) Push(writer base.Buffer, conn base.Connection) {
+	writer.PushVrI(int32(p.Action))
+	writer.PushVrI(int32(len(p.Values)))
+
+	for _, value := range p.Values {
+		value.Push(writer)
+	}
+}
