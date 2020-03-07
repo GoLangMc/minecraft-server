@@ -4,9 +4,12 @@ import (
 	"minecraft-server/apis/data"
 	"minecraft-server/apis/data/msgs"
 	"minecraft-server/apis/game"
+	"minecraft-server/apis/game/level"
 	"minecraft-server/impl/base"
 	"minecraft-server/impl/data/client"
 	"minecraft-server/impl/data/plugin"
+
+	apis_conn "minecraft-server/impl/conn"
 )
 
 type PacketOChatMessage struct {
@@ -162,4 +165,35 @@ func (p *PacketODeclareRecipes) UUID() int32 {
 func (p *PacketODeclareRecipes) Push(writer base.Buffer, conn base.Connection) {
 	writer.PushVrI(p.RecipeCount)
 	// when recipes are implemented, instead of holding a recipe count, simply write the size of the slice, Recipe will implement BufferPush
+}
+
+type PacketOChunkData struct {
+	Chunk level.Chunk
+}
+
+func (p *PacketOChunkData) UUID() int32 {
+	return 0x22
+}
+
+func (p *PacketOChunkData) Push(writer base.Buffer, conn base.Connection) {
+	writer.PushI32(int32(p.Chunk.ChunkX()))
+	writer.PushI32(int32(p.Chunk.ChunkZ()))
+
+	// full chunk (for now >:D)
+	writer.PushBit(true)
+
+	chunkData := apis_conn.NewBuffer()
+	p.Chunk.Push(chunkData) // write chunk data and primary bit mask
+
+	// pull primary bit mask and push to writer
+	writer.PushVrI(chunkData.PullVrI())
+
+	// write height-maps
+	writer.PushNbt(p.Chunk.HeightMapNbtCompound())
+
+	// data, prefixed with len
+	writer.PushUAS(chunkData.UAS(), true)
+
+	// write block entities
+	writer.PushVrI(0)
 }
