@@ -1,8 +1,6 @@
 package client
 
 import (
-	"os"
-
 	"minecraft-server/apis/buff"
 	"minecraft-server/apis/data"
 	"minecraft-server/apis/data/msgs"
@@ -209,12 +207,6 @@ func (p *PacketOChunkData) Push(writer buff.Buffer, conn base.Connection) {
 
 	// write block entities
 	writer.PushVrI(0)
-
-	data, _ := os.Create("data.bin")
-	data.Write(writer.UAS())
-	data.Close()
-
-	// fmt.Println(writer)
 }
 
 type PacketOPlayerInfo struct {
