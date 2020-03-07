@@ -1,6 +1,7 @@
 package level
 
 import (
+	"minecraft-server/apis/data/tags"
 	apis_level "minecraft-server/apis/game/level"
 	"minecraft-server/impl/base"
 )
@@ -12,6 +13,8 @@ type chunk struct {
 	level *level
 
 	slices []*slice
+
+	heightMap map[heightMapType]*heightMap
 }
 
 func newChunk(level *level, x, z int) *chunk {
@@ -21,7 +24,15 @@ func newChunk(level *level, x, z int) *chunk {
 
 		level: level,
 
-		slices: make([]*slice, apis_level.SliceC, apis_level.SliceC),
+		slices:    make([]*slice, apis_level.SliceC, apis_level.SliceC),
+		heightMap: make(map[heightMapType]*heightMap),
+	}
+
+	for _, mapType := range heightMapTypes {
+		chunk.heightMap[mapType] = &heightMap{
+			chunk:         chunk,
+			heightMapData: base.NewCompacter(9, 256),
+		}
 	}
 
 	return chunk
@@ -100,4 +111,42 @@ func (c *chunk) Push(writer base.Buffer) {
 	}
 
 	writer.PushVrI(mask)
+}
+
+func (c *chunk) HeightMapNbtCompound() *tags.NbtCompound {
+	compound := tags.NbtCompound{Value: make(map[string]tags.Nbt)}
+
+	for t, v := range c.heightMap {
+		compound.Set(string(t), &tags.NbtArrI64{Value: v.heightMapData.Values})
+	}
+
+	return &compound
+}
+
+type heightMapType string
+
+const (
+	WorldSurfaceWg         heightMapType = "WORLD_SURFACE_WG"
+	WorldSurface           heightMapType = "WORLD_SURFACE"
+	OceanFloorWg           heightMapType = "OCEAN_FLOOR_WG"
+	OceanFloor             heightMapType = "OCEAN_FLOOR"
+	MotionBlocking         heightMapType = "MOTION_BLOCKING"
+	MotionBlockingNoLeaves heightMapType = "MOTION_BLOCKING_NO_LEAVES"
+)
+
+var heightMapTypes = []heightMapType{
+	WorldSurfaceWg,
+	WorldSurface,
+	OceanFloorWg,
+	OceanFloor,
+	MotionBlocking,
+	MotionBlockingNoLeaves,
+}
+
+type heightMap struct {
+	chunk *chunk
+	check func(b *block) bool
+
+	heightMapType heightMapType
+	heightMapData *base.Compacter
 }
