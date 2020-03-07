@@ -3,7 +3,7 @@ package client
 import (
 	"fmt"
 
-	"minecraft-server/impl/base"
+	"minecraft-server/apis/buff"
 	"minecraft-server/impl/mask"
 )
 
@@ -23,7 +23,7 @@ func (d *SkinParts) String() string {
 	return fmt.Sprintf("Cape:%t Head:%t Body:%t ArmL:%t ArmR:%t LegL:%t LegR:%t", d.Cape, d.Head, d.Body, d.ArmL, d.ArmR, d.LegL, d.LegR)
 }
 
-func (d *SkinParts) Push(writer base.Buffer) {
+func (d *SkinParts) Push(writer buff.Buffer) {
 	flags := byte(0)
 
 	d.Set(&flags, 0x01, d.Cape)
@@ -37,7 +37,7 @@ func (d *SkinParts) Push(writer base.Buffer) {
 	writer.PushByt(flags)
 }
 
-func (d *SkinParts) Pull(reader base.Buffer) {
+func (d *SkinParts) Pull(reader buff.Buffer) {
 	flags := reader.PullByt()
 
 	d.Cape = d.Has(flags, 0x01)

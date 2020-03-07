@@ -81,6 +81,8 @@ func (l *level) getChunk(x, z int, generate bool) apis_level.Chunk {
 
 // generates chunks with the normal super-flat style
 func GenSuperFlat(level apis_level.Level, size int) {
+
+	id := 210
 	for x := -size; x < size; x++ {
 		for z := -size; z < size; z++ {
 			chunk := level.GetChunk(x, z)
@@ -89,10 +91,20 @@ func GenSuperFlat(level apis_level.Level, size int) {
 				chunk.GetSlice(sliceY)
 			}
 
-			chunk.GetSlice(0).(*slice).layer(0, 7)
-			chunk.GetSlice(0).(*slice).layer(1, 1)
-			chunk.GetSlice(0).(*slice).layer(2, 1)
-			chunk.GetSlice(0).(*slice).layer(3, 2)
+			chunk.GetSlice(0).(*slice).fill(id)
+			chunk.GetSlice(1).(*slice).fill(id)
+			chunk.GetSlice(2).(*slice).fill(id)
+			id++
+		}
+	}
+
+	for _, c := range level.Chunks() {
+		_ = c.(*chunk).heightMap[MotionBlocking]
+
+		for x := 0; x < apis_level.ChunkW; x++ {
+			for z := 0; z < apis_level.ChunkL; z++ {
+				// height.heightMapData.Set(x + z * 16, 16 * 3)
+			}
 		}
 	}
 }

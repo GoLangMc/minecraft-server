@@ -1,9 +1,11 @@
 package level
 
-import "minecraft-server/impl/base"
+import (
+	"minecraft-server/apis/buff"
+)
 
 type Slice interface {
-	base.BufferPush
+	buff.BufferPush
 
 	Index() int
 

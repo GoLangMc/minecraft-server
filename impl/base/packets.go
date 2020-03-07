@@ -3,6 +3,7 @@ package base
 import (
 	"fmt"
 
+	"minecraft-server/apis/buff"
 	"minecraft-server/apis/util"
 )
 
@@ -73,14 +74,14 @@ type PacketI interface {
 	Packet
 
 	// decode the server_data from the reader into this packet
-	Pull(reader Buffer, conn Connection)
+	Pull(reader buff.Buffer, conn Connection)
 }
 
 type PacketO interface {
 	Packet
 
 	// encode the server_data from the packet into this writer
-	Push(writer Buffer, conn Connection)
+	Push(writer buff.Buffer, conn Connection)
 }
 
 type Packets interface {

@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"strconv"
 
+	"minecraft-server/apis/buff"
 	"minecraft-server/apis/logs"
 	"minecraft-server/impl/base"
 	"minecraft-server/impl/data/system"
@@ -144,7 +145,7 @@ func handleConnect(network *network, conn base.Connection) {
 	}
 }
 
-func handleReceive(network *network, conn base.Connection, bufI base.Buffer, bufO base.Buffer) {
+func handleReceive(network *network, conn base.Connection, bufI buff.Buffer, bufO buff.Buffer) {
 	uuid := bufI.PullVrI()
 
 	packetI := network.packets.GetPacketI(uuid, conn.GetState())

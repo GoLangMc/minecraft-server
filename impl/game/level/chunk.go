@@ -1,6 +1,7 @@
 package level
 
 import (
+	"minecraft-server/apis/buff"
 	"minecraft-server/apis/data/tags"
 	apis_level "minecraft-server/apis/game/level"
 	"minecraft-server/impl/base"
@@ -30,7 +31,9 @@ func newChunk(level *level, x, z int) *chunk {
 
 	for _, mapType := range heightMapTypes {
 		chunk.heightMap[mapType] = &heightMap{
-			chunk:         chunk,
+			chunk: chunk,
+
+			heightMapType: mapType,
 			heightMapData: base.NewCompacter(9, 256),
 		}
 	}
@@ -96,7 +99,7 @@ func (c *chunk) GetBlock(x, y, z int) apis_level.Block {
 	}
 }
 
-func (c *chunk) Push(writer base.Buffer) {
+func (c *chunk) Push(writer buff.Buffer) {
 	mask := int32(0)
 
 	for i := 0; i < apis_level.SliceC; i++ {
@@ -116,9 +119,8 @@ func (c *chunk) Push(writer base.Buffer) {
 func (c *chunk) HeightMapNbtCompound() *tags.NbtCompound {
 	compound := tags.NbtCompound{Value: make(map[string]tags.Nbt)}
 
-	for t, v := range c.heightMap {
-		compound.Set(string(t), &tags.NbtArrI64{Value: v.heightMapData.Values})
-	}
+	motionBlocking := c.heightMap[MotionBlocking]
+	compound.Set(string(motionBlocking.heightMapType), &tags.NbtArrI64{Value: motionBlocking.heightMapData.Values})
 
 	return &compound
 }

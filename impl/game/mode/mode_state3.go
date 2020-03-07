@@ -16,6 +16,7 @@ import (
 	"minecraft-server/impl/data/client"
 	"minecraft-server/impl/data/plugin"
 	"minecraft-server/impl/data/values"
+	impl_level "minecraft-server/impl/game/level"
 
 	impl_event "minecraft-server/impl/game/event"
 
@@ -126,7 +127,7 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 				Location: data.Location{
 					PositionF: data.PositionF{
 						X: 0,
-						Y: 100,
+						Y: 10,
 						Z: 0,
 					},
 					RotationF: data.RotationF{
@@ -142,6 +143,33 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 				Values: []client.PlayerInfo{
 					&client.PlayerInfoAddPlayer{Player: conn.Player},
 				},
+			})
+
+			conn.SendPacket(&client_packet.PacketOEntityMetadata{Entity: conn.Player})
+
+			level := impl_level.NewLevel("test")
+			impl_level.GenSuperFlat(level, 6)
+
+			for _, chunk := range level.Chunks() {
+				conn.SendPacket(&client_packet.PacketOChunkData{Chunk: chunk})
+			}
+
+			logger.DataF("chunks sent to player: %s", conn.Player.Name())
+
+			conn.SendPacket(&client_packet.PacketOPlayerLocation{
+				ID: 1,
+				Location: data.Location{
+					PositionF: data.PositionF{
+						X: 0,
+						Y: 10,
+						Z: 0,
+					},
+					RotationF: data.RotationF{
+						AxisX: 0,
+						AxisY: 0,
+					},
+				},
+				Relative: client.Relativity{},
 			})
 		}
 	}()

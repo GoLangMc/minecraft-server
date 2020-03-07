@@ -1,6 +1,7 @@
 package server
 
 import (
+	"minecraft-server/apis/buff"
 	"minecraft-server/apis/data"
 	"minecraft-server/apis/game"
 	"minecraft-server/impl/base"
@@ -16,7 +17,7 @@ func (p *PacketIKeepAlive) UUID() int32 {
 	return 0x0F
 }
 
-func (p *PacketIKeepAlive) Pull(reader base.Buffer, conn base.Connection) {
+func (p *PacketIKeepAlive) Pull(reader buff.Buffer, conn base.Connection) {
 	p.KeepAliveID = reader.PullI64()
 }
 
@@ -28,7 +29,7 @@ func (p *PacketIChatMessage) UUID() int32 {
 	return 0x03
 }
 
-func (p *PacketIChatMessage) Pull(reader base.Buffer, conn base.Connection) {
+func (p *PacketIChatMessage) Pull(reader buff.Buffer, conn base.Connection) {
 	p.Message = reader.PullTxt()
 }
 
@@ -40,7 +41,7 @@ func (p *PacketITeleportConfirm) UUID() int32 {
 	return 0x00
 }
 
-func (p *PacketITeleportConfirm) Pull(reader base.Buffer, conn base.Connection) {
+func (p *PacketITeleportConfirm) Pull(reader buff.Buffer, conn base.Connection) {
 	p.TeleportID = reader.PullVrI()
 }
 
@@ -53,7 +54,7 @@ func (p *PacketIQueryBlockNBT) UUID() int32 {
 	return 0x01
 }
 
-func (p *PacketIQueryBlockNBT) Pull(reader base.Buffer, conn base.Connection) {
+func (p *PacketIQueryBlockNBT) Pull(reader buff.Buffer, conn base.Connection) {
 	p.TransactionID = reader.PullVrI()
 	p.Position = reader.PullPos()
 }
@@ -66,7 +67,7 @@ func (p *PacketISetDifficulty) UUID() int32 {
 	return 0x02
 }
 
-func (p *PacketISetDifficulty) Pull(reader base.Buffer, conn base.Connection) {
+func (p *PacketISetDifficulty) Pull(reader buff.Buffer, conn base.Connection) {
 	p.Difficult = game.DifficultyValueOf(reader.PullByt())
 }
 
@@ -78,7 +79,7 @@ func (p *PacketIPluginMessage) UUID() int32 {
 	return 0x0B
 }
 
-func (p *PacketIPluginMessage) Pull(reader base.Buffer, conn base.Connection) {
+func (p *PacketIPluginMessage) Pull(reader buff.Buffer, conn base.Connection) {
 	channel := reader.PullTxt()
 	message := plugin.GetMessageForChannel(channel)
 
@@ -99,7 +100,7 @@ func (p *PacketIClientStatus) UUID() int32 {
 	return 0x04
 }
 
-func (p *PacketIClientStatus) Pull(reader base.Buffer, conn base.Connection) {
+func (p *PacketIClientStatus) Pull(reader buff.Buffer, conn base.Connection) {
 	p.Action = client.StatusAction(reader.PullVrI())
 }
 
@@ -116,7 +117,7 @@ func (p *PacketIClientSettings) UUID() int32 {
 	return 0x05
 }
 
-func (p *PacketIClientSettings) Pull(reader base.Buffer, conn base.Connection) {
+func (p *PacketIClientSettings) Pull(reader buff.Buffer, conn base.Connection) {
 	p.Locale = reader.PullTxt()
 	p.ViewDistance = reader.PullByt()
 	p.ChatMode = client.ChatMode(reader.PullVrI())
@@ -139,7 +140,7 @@ func (p *PacketIPlayerAbilities) UUID() int32 {
 	return 0x19
 }
 
-func (p *PacketIPlayerAbilities) Pull(reader base.Buffer, conn base.Connection) {
+func (p *PacketIPlayerAbilities) Pull(reader buff.Buffer, conn base.Connection) {
 	abilities := client.PlayerAbilities{}
 	abilities.Pull(reader)
 
@@ -158,7 +159,7 @@ func (p *PacketIPlayerPosition) UUID() int32 {
 	return 0x11
 }
 
-func (p *PacketIPlayerPosition) Pull(reader base.Buffer, conn base.Connection) {
+func (p *PacketIPlayerPosition) Pull(reader buff.Buffer, conn base.Connection) {
 	p.Position = data.PositionF{
 		X: reader.PullF64(),
 		Y: reader.PullF64(),
@@ -177,7 +178,7 @@ func (p *PacketIPlayerLocation) UUID() int32 {
 	return 0x12
 }
 
-func (p *PacketIPlayerLocation) Pull(reader base.Buffer, conn base.Connection) {
+func (p *PacketIPlayerLocation) Pull(reader buff.Buffer, conn base.Connection) {
 	p.Location = data.Location{
 		PositionF: data.PositionF{
 			X: reader.PullF64(),
@@ -202,7 +203,7 @@ func (p *PacketIPlayerRotation) UUID() int32 {
 	return 0x13
 }
 
-func (p *PacketIPlayerRotation) Pull(reader base.Buffer, conn base.Connection) {
+func (p *PacketIPlayerRotation) Pull(reader buff.Buffer, conn base.Connection) {
 	p.Rotation = data.RotationF{
 		AxisX: reader.PullF32(),
 		AxisY: reader.PullF32(),

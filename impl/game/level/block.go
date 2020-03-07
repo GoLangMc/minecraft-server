@@ -33,12 +33,12 @@ func (b *block) Level() apis_level.Level {
 	return b.slice.chunk.level
 }
 
-func (b *block) GetBlockType() (value int64) {
+func (b *block) GetBlockType() (value int) {
 	value = b.slice.sliceBlockGet(sliceIndex(blockLevelToSlice(b.x, b.y, b.z)))
 	return
 }
 
-func (b *block) SetBlockType(value int64) {
+func (b *block) SetBlockType(value int) {
 	value = b.slice.sliceBlockSet(sliceIndex(blockLevelToSlice(b.x, b.y, b.z)), value)
 	return
 }

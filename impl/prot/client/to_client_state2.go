@@ -1,6 +1,7 @@
 package client
 
 import (
+	"minecraft-server/apis/buff"
 	"minecraft-server/apis/data/msgs"
 	"minecraft-server/impl/base"
 )
@@ -15,7 +16,7 @@ func (p *PacketODisconnect) UUID() int32 {
 	return 0x00
 }
 
-func (p *PacketODisconnect) Push(writer base.Buffer, conn base.Connection) {
+func (p *PacketODisconnect) Push(writer buff.Buffer, conn base.Connection) {
 	message := p.Reason
 
 	writer.PushTxt(message.AsJson())
@@ -31,7 +32,7 @@ func (p *PacketOEncryptionRequest) UUID() int32 {
 	return 0x01
 }
 
-func (p *PacketOEncryptionRequest) Push(writer base.Buffer, conn base.Connection) {
+func (p *PacketOEncryptionRequest) Push(writer buff.Buffer, conn base.Connection) {
 	writer.PushTxt(p.Server)
 	writer.PushUAS(p.Public, true)
 	writer.PushUAS(p.Verify, true)
@@ -46,7 +47,7 @@ func (p *PacketOLoginSuccess) UUID() int32 {
 	return 0x02
 }
 
-func (p *PacketOLoginSuccess) Push(writer base.Buffer, conn base.Connection) {
+func (p *PacketOLoginSuccess) Push(writer buff.Buffer, conn base.Connection) {
 	writer.PushTxt(p.PlayerUUID)
 	writer.PushTxt(p.PlayerName)
 }
@@ -59,7 +60,7 @@ func (p *PacketOSetCompression) UUID() int32 {
 	return 0x03
 }
 
-func (p *PacketOSetCompression) Push(writer base.Buffer, conn base.Connection) {
+func (p *PacketOSetCompression) Push(writer buff.Buffer, conn base.Connection) {
 	writer.PushVrI(p.Threshold)
 }
 
@@ -73,7 +74,7 @@ func (p *PacketOLoginPluginRequest) UUID() int32 {
 	return 0x04
 }
 
-func (p *PacketOLoginPluginRequest) Push(writer base.Buffer, conn base.Connection) {
+func (p *PacketOLoginPluginRequest) Push(writer buff.Buffer, conn base.Connection) {
 	writer.PushVrI(p.MessageID)
 	writer.PushTxt(p.Channel)
 	writer.PushUAS(p.OptData, false)

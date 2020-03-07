@@ -1,7 +1,7 @@
 package client
 
 import (
-	"minecraft-server/impl/base"
+	"minecraft-server/apis/buff"
 	"minecraft-server/impl/mask"
 )
 
@@ -14,7 +14,7 @@ type PlayerAbilities struct {
 	InstantBuild bool // creative??
 }
 
-func (p *PlayerAbilities) Push(writer base.Buffer) {
+func (p *PlayerAbilities) Push(writer buff.Buffer) {
 	flags := byte(0)
 
 	p.Set(&flags, 0x01, p.Invulnerable)
@@ -25,7 +25,7 @@ func (p *PlayerAbilities) Push(writer base.Buffer) {
 	writer.PushByt(flags)
 }
 
-func (p *PlayerAbilities) Pull(reader base.Buffer) {
+func (p *PlayerAbilities) Pull(reader buff.Buffer) {
 	flags := reader.PullByt()
 
 	p.Invulnerable = p.Has(flags, 0x01)

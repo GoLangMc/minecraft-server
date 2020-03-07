@@ -1,8 +1,8 @@
 package client
 
 import (
+	"minecraft-server/apis/buff"
 	"minecraft-server/apis/ents"
-	"minecraft-server/impl/base"
 )
 
 type PlayerInfoAction int32
@@ -16,14 +16,14 @@ const (
 )
 
 type PlayerInfo interface {
-	base.BufferPush
+	buff.BufferPush
 }
 
 type PlayerInfoAddPlayer struct {
 	Player ents.Player
 }
 
-func (p *PlayerInfoAddPlayer) Push(writer base.Buffer) {
+func (p *PlayerInfoAddPlayer) Push(writer buff.Buffer) {
 	prof := p.Player.GetProfile()
 	writer.PushUID(prof.UUID)
 	writer.PushTxt(prof.Name)
@@ -47,4 +47,7 @@ func (p *PlayerInfoAddPlayer) Push(writer base.Buffer) {
 	writer.PushVrI(0) // update this to the player's actual ping
 
 	writer.PushBit(false) // update this to be whether the player has a custom display name or not, write that name as json if they do
+}
+
+type PlayerInfoUpdateLatency struct {
 }

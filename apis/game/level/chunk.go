@@ -1,12 +1,12 @@
 package level
 
 import (
+	"minecraft-server/apis/buff"
 	"minecraft-server/apis/data/tags"
-	"minecraft-server/impl/base"
 )
 
 type Chunk interface {
-	base.BufferPush
+	buff.BufferPush
 
 	ChunkX() int
 	ChunkZ() int

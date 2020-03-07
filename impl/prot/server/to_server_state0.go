@@ -1,6 +1,7 @@
 package server
 
 import (
+	"minecraft-server/apis/buff"
 	"minecraft-server/impl/base"
 )
 
@@ -19,7 +20,7 @@ func (p *PacketIHandshake) UUID() int32 {
 	return 0x00
 }
 
-func (p *PacketIHandshake) Pull(reader base.Buffer, conn base.Connection) {
+func (p *PacketIHandshake) Pull(reader buff.Buffer, conn base.Connection) {
 	p.version = reader.PullVrI()
 
 	p.host = reader.PullTxt()

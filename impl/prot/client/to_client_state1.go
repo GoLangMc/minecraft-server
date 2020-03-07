@@ -3,6 +3,7 @@ package client
 import (
 	"encoding/json"
 
+	"minecraft-server/apis/buff"
 	"minecraft-server/impl/base"
 	"minecraft-server/impl/data/status"
 )
@@ -17,7 +18,7 @@ func (p *PacketOResponse) UUID() int32 {
 	return 0x00
 }
 
-func (p *PacketOResponse) Push(writer base.Buffer, conn base.Connection) {
+func (p *PacketOResponse) Push(writer buff.Buffer, conn base.Connection) {
 	if text, err := json.Marshal(p.Status); err != nil {
 		panic(err)
 	} else {
@@ -33,6 +34,6 @@ func (p *PacketOPong) UUID() int32 {
 	return 0x01
 }
 
-func (p *PacketOPong) Push(writer base.Buffer, conn base.Connection) {
+func (p *PacketOPong) Push(writer buff.Buffer, conn base.Connection) {
 	writer.PushI64(p.Ping)
 }

@@ -1,4 +1,4 @@
-package base
+package buff
 
 import (
 	"minecraft-server/apis/data"
@@ -7,8 +7,6 @@ import (
 )
 
 type Buffer interface {
-
-	// server_data
 	Len() int32
 
 	SAS() []int8
@@ -56,7 +54,7 @@ type Buffer interface {
 
 	PullPos() data.PositionI
 
-	PullNbt() tags.Nbt
+	PullNbt() *tags.NbtCompound
 
 	// push
 	PushBit(data bool)
@@ -87,7 +85,7 @@ type Buffer interface {
 
 	PushPos(data data.PositionI)
 
-	PushNbt(data tags.Nbt)
+	PushNbt(data *tags.NbtCompound)
 }
 
 type BufferPush interface {

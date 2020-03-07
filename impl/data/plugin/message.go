@@ -1,15 +1,15 @@
 package plugin
 
 import (
+	"minecraft-server/apis/buff"
 	"minecraft-server/apis/data"
-	"minecraft-server/impl/base"
 )
 
 type Message interface {
 	Chan() string
 
-	base.BufferPush
-	base.BufferPull
+	buff.BufferPush
+	buff.BufferPull
 }
 
 var registry = createMessageRegistry()
@@ -61,11 +61,11 @@ func (b *Brand) Chan() string {
 	return CHANNEL_BRAND
 }
 
-func (b *Brand) Push(writer base.Buffer) {
+func (b *Brand) Push(writer buff.Buffer) {
 	writer.PushTxt(b.Name)
 }
 
-func (b *Brand) Pull(reader base.Buffer) {
+func (b *Brand) Pull(reader buff.Buffer) {
 	b.Name = reader.PullTxt()
 }
 
@@ -86,7 +86,7 @@ type PathEntity struct {
 	CSet    []PathPoint
 }
 
-func (p *PathEntity) Push(writer base.Buffer) {
+func (p *PathEntity) Push(writer buff.Buffer) {
 	writer.PushI32(int32(p.Index))
 
 	p.Target.Push(writer)
@@ -107,7 +107,7 @@ func (p *PathEntity) Push(writer base.Buffer) {
 	}
 }
 
-func (p *PathEntity) Pull(reader base.Buffer) {
+func (p *PathEntity) Pull(reader buff.Buffer) {
 	p.Index = int(reader.PullI32())
 
 	target := PathPoint{}
@@ -159,7 +159,7 @@ type PathPoint struct {
 	DistanceTarget float32
 }
 
-func (p *PathPoint) Push(writer base.Buffer) {
+func (p *PathPoint) Push(writer buff.Buffer) {
 	writer.PushI32(p.X)
 	writer.PushI32(p.Y)
 	writer.PushI32(p.Z)
@@ -171,7 +171,7 @@ func (p *PathPoint) Push(writer base.Buffer) {
 	writer.PushF32(p.DistanceTarget)
 }
 
-func (p *PathPoint) Pull(reader base.Buffer) {
+func (p *PathPoint) Pull(reader buff.Buffer) {
 	p.X = reader.PullI32()
 	p.Y = reader.PullI32()
 	p.Z = reader.PullI32()
@@ -209,13 +209,13 @@ func (d *DebugPaths) Chan() string {
 	return CHANNEL_DEBUG_PATHS
 }
 
-func (d *DebugPaths) Push(writer base.Buffer) {
+func (d *DebugPaths) Push(writer buff.Buffer) {
 	writer.PushI32(d.UnknownValue1)
 	writer.PushF32(d.UnknownValue2)
 	d.PathEntity.Push(writer)
 }
 
-func (d *DebugPaths) Pull(reader base.Buffer) {
+func (d *DebugPaths) Pull(reader buff.Buffer) {
 	d.UnknownValue1 = reader.PullI32()
 	d.UnknownValue2 = reader.PullF32()
 
@@ -234,12 +234,12 @@ func (d *DebugNeighbors) Chan() string {
 	return CHANNEL_DEBUG_NEIGHBORS
 }
 
-func (d *DebugNeighbors) Push(writer base.Buffer) {
+func (d *DebugNeighbors) Push(writer buff.Buffer) {
 	writer.PushVrL(d.Time)
 	writer.PushPos(d.Location)
 }
 
-func (d *DebugNeighbors) Pull(reader base.Buffer) {
+func (d *DebugNeighbors) Pull(reader buff.Buffer) {
 	d.Time = reader.PullVrL()
 	d.Location = reader.PullPos()
 }

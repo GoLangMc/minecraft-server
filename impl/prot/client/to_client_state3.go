@@ -1,8 +1,12 @@
 package client
 
 import (
+	"os"
+
+	"minecraft-server/apis/buff"
 	"minecraft-server/apis/data"
 	"minecraft-server/apis/data/msgs"
+	"minecraft-server/apis/ents"
 	"minecraft-server/apis/game"
 	"minecraft-server/apis/game/level"
 	"minecraft-server/impl/base"
@@ -21,7 +25,7 @@ func (p *PacketOChatMessage) UUID() int32 {
 	return 0x0F
 }
 
-func (p *PacketOChatMessage) Push(writer base.Buffer, conn base.Connection) {
+func (p *PacketOChatMessage) Push(writer buff.Buffer, conn base.Connection) {
 	message := p.Message
 
 	if p.MessagePosition == msgs.HotBarText {
@@ -49,7 +53,7 @@ func (p *PacketOJoinGame) UUID() int32 {
 	return 0x26
 }
 
-func (p *PacketOJoinGame) Push(writer base.Buffer, conn base.Connection) {
+func (p *PacketOJoinGame) Push(writer buff.Buffer, conn base.Connection) {
 	writer.PushI32(p.EntityID)
 	writer.PushByt(p.GameMode.Encoded(p.Hardcore /* pull this value from somewhere */))
 	writer.PushI32(int32(p.Dimension))
@@ -69,7 +73,7 @@ func (p *PacketOPluginMessage) UUID() int32 {
 	return 0x19
 }
 
-func (p *PacketOPluginMessage) Push(writer base.Buffer, conn base.Connection) {
+func (p *PacketOPluginMessage) Push(writer buff.Buffer, conn base.Connection) {
 	writer.PushTxt(p.Message.Chan())
 	p.Message.Push(writer)
 }
@@ -85,7 +89,7 @@ func (p *PacketOPlayerLocation) UUID() int32 {
 	return 0x36
 }
 
-func (p *PacketOPlayerLocation) Push(writer base.Buffer, conn base.Connection) {
+func (p *PacketOPlayerLocation) Push(writer buff.Buffer, conn base.Connection) {
 	writer.PushF64(p.Location.X)
 	writer.PushF64(p.Location.Y)
 	writer.PushF64(p.Location.Z)
@@ -106,7 +110,7 @@ func (p *PacketOKeepAlive) UUID() int32 {
 	return 0x21
 }
 
-func (p *PacketOKeepAlive) Push(writer base.Buffer, conn base.Connection) {
+func (p *PacketOKeepAlive) Push(writer buff.Buffer, conn base.Connection) {
 	writer.PushI64(p.KeepAliveID)
 }
 
@@ -119,7 +123,7 @@ func (p *PacketOServerDifficulty) UUID() int32 {
 	return 0x0E
 }
 
-func (p *PacketOServerDifficulty) Push(writer base.Buffer, conn base.Connection) {
+func (p *PacketOServerDifficulty) Push(writer buff.Buffer, conn base.Connection) {
 	writer.PushByt(byte(p.Difficulty))
 	writer.PushBit(p.Locked)
 }
@@ -134,7 +138,7 @@ func (p *PacketOPlayerAbilities) UUID() int32 {
 	return 0x32
 }
 
-func (p *PacketOPlayerAbilities) Push(writer base.Buffer, conn base.Connection) {
+func (p *PacketOPlayerAbilities) Push(writer buff.Buffer, conn base.Connection) {
 	p.Abilities.Push(writer)
 
 	writer.PushF32(p.FlyingSpeed)
@@ -149,7 +153,7 @@ func (p *PacketOHeldItemChange) UUID() int32 {
 	return 0x40
 }
 
-func (p *PacketOHeldItemChange) Push(writer base.Buffer, conn base.Connection) {
+func (p *PacketOHeldItemChange) Push(writer buff.Buffer, conn base.Connection) {
 	writer.PushByt(byte(p.Slot))
 }
 
@@ -162,7 +166,7 @@ func (p *PacketODeclareRecipes) UUID() int32 {
 	return 0x5B
 }
 
-func (p *PacketODeclareRecipes) Push(writer base.Buffer, conn base.Connection) {
+func (p *PacketODeclareRecipes) Push(writer buff.Buffer, conn base.Connection) {
 	writer.PushVrI(p.RecipeCount)
 	// when recipes are implemented, instead of holding a recipe count, simply write the size of the slice, Recipe will implement BufferPush
 }
@@ -175,7 +179,7 @@ func (p *PacketOChunkData) UUID() int32 {
 	return 0x22
 }
 
-func (p *PacketOChunkData) Push(writer base.Buffer, conn base.Connection) {
+func (p *PacketOChunkData) Push(writer buff.Buffer, conn base.Connection) {
 	writer.PushI32(int32(p.Chunk.ChunkX()))
 	writer.PushI32(int32(p.Chunk.ChunkZ()))
 
@@ -193,7 +197,7 @@ func (p *PacketOChunkData) Push(writer base.Buffer, conn base.Connection) {
 
 	biomes := make([]int32, 1024, 1024)
 	for i := range biomes {
-		biomes[i] = 127 // void biome
+		biomes[i] = 0 // void biome
 	}
 
 	for _, biome := range biomes {
@@ -205,6 +209,12 @@ func (p *PacketOChunkData) Push(writer base.Buffer, conn base.Connection) {
 
 	// write block entities
 	writer.PushVrI(0)
+
+	data, _ := os.Create("data.bin")
+	data.Write(writer.UAS())
+	data.Close()
+
+	// fmt.Println(writer)
 }
 
 type PacketOPlayerInfo struct {
@@ -216,11 +226,45 @@ func (p *PacketOPlayerInfo) UUID() int32 {
 	return 0x34
 }
 
-func (p *PacketOPlayerInfo) Push(writer base.Buffer, conn base.Connection) {
+func (p *PacketOPlayerInfo) Push(writer buff.Buffer, conn base.Connection) {
 	writer.PushVrI(int32(p.Action))
 	writer.PushVrI(int32(len(p.Values)))
 
 	for _, value := range p.Values {
 		value.Push(writer)
 	}
+}
+
+type PacketOEntityMetadata struct {
+	Entity ents.Entity
+}
+
+func (p *PacketOEntityMetadata) UUID() int32 {
+	return 0x44
+}
+
+func (p *PacketOEntityMetadata) Push(writer buff.Buffer, conn base.Connection) {
+	writer.PushVrI(int32(p.Entity.EntityUUID())) // questionable...
+
+	// only supporting player metadata for now
+	_, ok := p.Entity.(ents.Player)
+	if ok {
+
+		writer.PushByt(16) // index | displayed skin parts
+		writer.PushVrI(0)  // type | byte
+
+		skin := client.SkinParts{
+			Cape: true,
+			Head: true,
+			Body: true,
+			ArmL: true,
+			ArmR: true,
+			LegL: true,
+			LegR: true,
+		}
+
+		skin.Push(writer)
+	}
+
+	writer.PushByt(0xFF)
 }

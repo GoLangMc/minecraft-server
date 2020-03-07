@@ -8,6 +8,6 @@ type Block interface {
 	Chunk() Chunk
 	Level() Level
 
-	GetBlockType() int64
-	SetBlockType(value int64)
+	GetBlockType() int
+	SetBlockType(value int)
 }

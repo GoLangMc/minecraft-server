@@ -1,6 +1,7 @@
 package level
 
 import (
+	"minecraft-server/apis/buff"
 	apis_level "minecraft-server/apis/game/level"
 	"minecraft-server/impl/base"
 )
@@ -57,7 +58,7 @@ func (s *slice) GetBlock(x, y, z int) apis_level.Block {
 	}
 }
 
-func (s *slice) Push(writer base.Buffer) {
+func (s *slice) Push(writer buff.Buffer) {
 	writer.PushI16(apis_level.SliceS) // full slice
 
 	writer.PushByt(apis_level.BitsPerBlock)
@@ -71,21 +72,21 @@ func (s *slice) Push(writer base.Buffer) {
 	}
 }
 
-func (s *slice) sliceBlockGet(index int) int64 {
+func (s *slice) sliceBlockGet(index int) int {
 	return s.values.Get(index)
 }
 
-func (s *slice) sliceBlockSet(index int, value int64) int64 {
+func (s *slice) sliceBlockSet(index int, value int) int {
 	return s.values.Set(index, value)
 }
 
-func (s *slice) fill(value int64) {
+func (s *slice) fill(value int) {
 	for y := 0; y < apis_level.SliceH; y++ {
 		s.layer(y, value)
 	}
 }
 
-func (s *slice) layer(index int, value int64) {
+func (s *slice) layer(index int, value int) {
 	for x := 0; x < apis_level.ChunkW; x++ {
 		for z := 0; z < apis_level.ChunkL; z++ {
 			s.sliceBlockSet(sliceIndex(x, index, z), value)

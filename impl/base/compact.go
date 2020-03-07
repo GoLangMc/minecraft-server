@@ -17,7 +17,7 @@ func NewCompacter(bits, size int) *Compacter {
 	}
 }
 
-func (c *Compacter) Set(index int, value int64) int64 {
+func (c *Compacter) Set(index int, value int) int {
 	bIndex := index * c.bpb
 
 	sIndex := bIndex >> 0x06
@@ -27,7 +27,7 @@ func (c *Compacter) Set(index int, value int64) int64 {
 
 	previousValue := int64(uint64(c.Values[sIndex])>>uIndex) & int64(c.max)
 
-	c.Values[sIndex] = c.Values[sIndex]&int64(^(c.max<<uIndex)) | ((value & int64(c.max)) << uIndex)
+	c.Values[sIndex] = c.Values[sIndex]&int64(^(c.max<<uIndex)) | int64((value&c.max)<<uIndex)
 
 	if sIndex != eIndex {
 		zIndex := 64 - uIndex
@@ -35,13 +35,13 @@ func (c *Compacter) Set(index int, value int64) int64 {
 
 		previousValue |= (c.Values[eIndex] << zIndex) & int64(c.max)
 
-		c.Values[eIndex] = int64(((uint64(c.Values[eIndex]) >> pIndex) << pIndex) | uint64((value&int64(c.max))>>zIndex))
+		c.Values[eIndex] = int64(((uint64(c.Values[eIndex]) >> pIndex) << pIndex) | uint64((value&c.max)>>zIndex))
 	}
 
-	return previousValue
+	return int(previousValue)
 }
 
-func (c *Compacter) Get(index int) int64 {
+func (c *Compacter) Get(index int) int {
 	bIndex := index * c.bpb
 
 	sIndex := bIndex >> 0x06
@@ -50,12 +50,12 @@ func (c *Compacter) Get(index int) int64 {
 	uIndex := bIndex ^ (sIndex << 0x06)
 
 	if sIndex == eIndex {
-		return int64((uint64(c.Values[sIndex]) >> uIndex) & uint64(c.max))
+		return int((uint64(c.Values[sIndex]) >> uIndex) & uint64(c.max))
 	}
 
 	zIndex := 64 - uIndex
 
-	return int64(uint64(c.Values[sIndex]>>uIndex) | uint64(c.Values[eIndex]<<zIndex)&uint64(c.max))
+	return int(uint64(c.Values[sIndex]>>uIndex) | uint64(c.Values[eIndex]<<zIndex)&uint64(c.max))
 }
 
 func iDontKnowWhatThisDoes(var0, var1 int) int {

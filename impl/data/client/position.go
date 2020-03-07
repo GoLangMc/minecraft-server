@@ -1,7 +1,7 @@
 package client
 
 import (
-	"minecraft-server/impl/base"
+	"minecraft-server/apis/buff"
 	"minecraft-server/impl/mask"
 )
 
@@ -16,7 +16,7 @@ type Relativity struct {
 	AxisY bool
 }
 
-func (r *Relativity) Push(writer base.Buffer) {
+func (r *Relativity) Push(writer buff.Buffer) {
 	flags := byte(0)
 
 	r.Set(&flags, 0x01, r.X)

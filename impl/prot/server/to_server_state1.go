@@ -1,6 +1,9 @@
 package server
 
-import "minecraft-server/impl/base"
+import (
+	"minecraft-server/apis/buff"
+	"minecraft-server/impl/base"
+)
 
 // done
 
@@ -11,7 +14,7 @@ func (p *PacketIRequest) UUID() int32 {
 	return 0x00
 }
 
-func (p *PacketIRequest) Pull(reader base.Buffer, conn base.Connection) {
+func (p *PacketIRequest) Pull(reader buff.Buffer, conn base.Connection) {
 	// no fields
 }
 
@@ -23,6 +26,6 @@ func (p *PacketIPing) UUID() int32 {
 	return 0x01
 }
 
-func (p *PacketIPing) Pull(reader base.Buffer, conn base.Connection) {
+func (p *PacketIPing) Pull(reader buff.Buffer, conn base.Connection) {
 	p.Ping = reader.PullI64()
 }
