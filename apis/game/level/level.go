@@ -10,5 +10,7 @@ type Level interface {
 
 	GetChunk(x, z int) Chunk
 
+	GetChunkIfLoaded(x, z int) Chunk
+
 	GetBlock(x, y, z int) Block
 }
