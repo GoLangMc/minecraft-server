@@ -1,6 +1,9 @@
 package level
 
-import "minecraft-server/impl/base"
+import (
+	"minecraft-server/apis/data/tags"
+	"minecraft-server/impl/base"
+)
 
 type Chunk interface {
 	base.BufferPush
@@ -17,4 +20,6 @@ type Chunk interface {
 
 	// supports values x:[0:15] y:[0:255] z: [0:15]
 	GetBlock(x, y, z int) Block
+
+	HeightMapNbtCompound() *tags.NbtCompound
 }
