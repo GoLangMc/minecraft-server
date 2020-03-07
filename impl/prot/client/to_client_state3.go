@@ -191,6 +191,15 @@ func (p *PacketOChunkData) Push(writer base.Buffer, conn base.Connection) {
 	// write height-maps
 	writer.PushNbt(p.Chunk.HeightMapNbtCompound())
 
+	biomes := make([]int32, 1024, 1024)
+	for i := range biomes {
+		biomes[i] = 127 // void biome
+	}
+
+	for _, biome := range biomes {
+		writer.PushI32(biome)
+	}
+
 	// data, prefixed with len
 	writer.PushUAS(chunkData.UAS(), true)
 
