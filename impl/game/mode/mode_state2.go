@@ -6,6 +6,7 @@ import (
 
 	"minecraft-server/apis/data/chat"
 	"minecraft-server/apis/data/msgs"
+	"minecraft-server/apis/game"
 	"minecraft-server/apis/util"
 	"minecraft-server/apis/uuid"
 	"minecraft-server/impl/base"
@@ -77,7 +78,20 @@ func HandleState2(watcher util.Watcher, join chan base.PlayerAndConnection) {
 				panic(fmt.Errorf("failed to decode uuid for %s: %s\n%v\n", conn.CertifyName(), auth.UUID, err))
 			}
 
-			player := ents.NewPlayer(uuid, auth.Name, conn)
+			prof := game.Profile{
+				UUID: uuid,
+				Name: auth.Name,
+			}
+
+			for _, prop := range auth.Prop {
+				prof.Properties = append(prof.Properties, &game.ProfileProperty{
+					Name:      prop.Name,
+					Value:     prop.Data,
+					Signature: prop.Sign,
+				})
+			}
+
+			player := ents.NewPlayer(&prof, conn)
 
 			conn.SendPacket(&states.PacketOLoginSuccess{
 				PlayerName: player.Name(),

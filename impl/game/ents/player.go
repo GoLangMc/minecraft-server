@@ -3,7 +3,7 @@ package ents
 import (
 	"minecraft-server/apis/data/msgs"
 	"minecraft-server/apis/ents"
-	"minecraft-server/apis/uuid"
+	"minecraft-server/apis/game"
 	"minecraft-server/impl/prot/states"
 
 	apis_base "minecraft-server/apis/base"
@@ -13,20 +13,22 @@ import (
 type player struct {
 	entityLiving
 
-	name string
+	prof *game.Profile
 
 	online bool
 
 	conn impl_base.Connection
 }
 
-func NewPlayer(uuid uuid.UUID, name string, conn impl_base.Connection) ents.Player {
+func NewPlayer(prof *game.Profile, conn impl_base.Connection) ents.Player {
 	player := &player{
+		prof:         prof,
 		entityLiving: newEntityLiving(),
 	}
 
-	player.SetName(name)
-	player.SetUUID(uuid)
+	player.SetName(prof.Name)
+	player.SetUUID(prof.UUID)
+
 	player.SetConn(conn)
 
 	return player
