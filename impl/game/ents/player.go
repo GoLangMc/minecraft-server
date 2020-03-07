@@ -1,10 +1,9 @@
 package ents
 
 import (
-	uuid "github.com/satori/go.uuid"
-
 	"minecraft-server/apis/data/msgs"
 	"minecraft-server/apis/ents"
+	"minecraft-server/apis/uuid"
 	"minecraft-server/impl/prot/states"
 
 	apis_base "minecraft-server/apis/base"

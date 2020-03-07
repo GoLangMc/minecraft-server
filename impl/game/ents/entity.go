@@ -1,6 +1,6 @@
 package ents
 
-import "github.com/satori/go.uuid"
+import "minecraft-server/apis/uuid"
 
 var entityCounter = int64(0)
 

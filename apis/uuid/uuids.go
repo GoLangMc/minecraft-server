@@ -2,7 +2,9 @@ package uuid
 
 import "github.com/satori/go.uuid"
 
-func NewUUID() uuid.UUID {
+type UUID = uuid.UUID
+
+func NewUUID() UUID {
 	gen, err := uuid.NewV4()
 	if err != nil {
 		panic(err)
@@ -11,11 +13,11 @@ func NewUUID() uuid.UUID {
 	return gen
 }
 
-func TextToUUID(text string) (data uuid.UUID, err error) {
+func TextToUUID(text string) (data UUID, err error) {
 	return uuid.FromString(text)
 }
 
-func UUIDToText(uuid uuid.UUID) (text string, err error) {
+func UUIDToText(uuid UUID) (text string, err error) {
 	data, err := uuid.MarshalText()
 
 	if err == nil {

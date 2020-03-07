@@ -6,8 +6,6 @@ import (
 	"strings"
 	"time"
 
-	uuid "github.com/satori/go.uuid"
-
 	"minecraft-server/apis"
 	"minecraft-server/apis/cmds"
 	"minecraft-server/apis/data/chat"
@@ -15,6 +13,7 @@ import (
 	"minecraft-server/apis/logs"
 	"minecraft-server/apis/task"
 	"minecraft-server/apis/util"
+	"minecraft-server/apis/uuid"
 	"minecraft-server/impl/conf"
 	"minecraft-server/impl/data/plugin"
 

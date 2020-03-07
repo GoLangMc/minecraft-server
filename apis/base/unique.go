@@ -1,6 +1,6 @@
 package base
 
-import "github.com/satori/go.uuid"
+import "minecraft-server/apis/uuid"
 
 type Unique interface {
 	UUID() uuid.UUID

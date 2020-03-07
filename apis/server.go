@@ -3,13 +3,12 @@ package apis
 import (
 	"sync"
 
-	"github.com/satori/go.uuid"
-
 	"minecraft-server/apis/cmds"
 	"minecraft-server/apis/ents"
 	"minecraft-server/apis/logs"
 	"minecraft-server/apis/task"
 	"minecraft-server/apis/util"
+	"minecraft-server/apis/uuid"
 
 	apis_base "minecraft-server/apis/base"
 	impl_base "minecraft-server/impl/base"
