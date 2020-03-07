@@ -24,6 +24,7 @@ type Nbt interface {
 	Name() string
 }
 
+// end
 type NbtEnd struct{}
 
 func (n *NbtEnd) Type() Typ {
@@ -34,6 +35,7 @@ func (n *NbtEnd) Name() string {
 	return "TAG_End"
 }
 
+// byte
 type NbtByt struct {
 	Value int8
 }
@@ -46,6 +48,7 @@ func (n *NbtByt) Name() string {
 	return "TAG_Byte"
 }
 
+// short
 type NbtI16 struct {
 	Value int16
 }
@@ -58,6 +61,7 @@ func (n *NbtI16) Name() string {
 	return "TAG_Short"
 }
 
+// int
 type NbtI32 struct {
 	Value int32
 }
@@ -70,6 +74,7 @@ func (n *NbtI32) Name() string {
 	return "TAG_Int"
 }
 
+// long
 type NbtI64 struct {
 	Value int64
 }
@@ -82,6 +87,7 @@ func (n *NbtI64) Name() string {
 	return "TAG_Long"
 }
 
+// float
 type NbtF32 struct {
 	Value float32
 }
@@ -94,6 +100,7 @@ func (n *NbtF32) Name() string {
 	return "TAG_Float"
 }
 
+// double
 type NbtF64 struct {
 	Value float64
 }
@@ -106,6 +113,7 @@ func (n *NbtF64) Name() string {
 	return "TAG_Double"
 }
 
+// byte array
 type NbtArrByt struct {
 	Value []int8
 }
@@ -118,6 +126,7 @@ func (n *NbtArrByt) Name() string {
 	return "TAG_Byte_Array"
 }
 
+// string
 type NbtTxt struct {
 	Value string
 }
@@ -130,6 +139,7 @@ func (n *NbtTxt) Name() string {
 	return "TAG_String"
 }
 
+// typed list
 type NbtArrAny struct {
 	NType Typ
 	Value []Nbt
@@ -143,6 +153,7 @@ func (n *NbtArrAny) Name() string {
 	return "TAG_List"
 }
 
+// compound (map)
 type NbtCompound struct {
 	Named string
 	Value map[string]Nbt
@@ -156,6 +167,16 @@ func (n *NbtCompound) Name() string {
 	return "TAG_Compound"
 }
 
+func (n *NbtCompound) Set(name string, data Nbt) {
+	n.Value[name] = data
+}
+
+func (n *NbtCompound) Get(name string) (nbt Nbt, con bool) {
+	nbt, con = n.Value[name]
+	return
+}
+
+// int list
 type NbtArrI32 struct {
 	Value []int32
 }
@@ -168,6 +189,7 @@ func (n *NbtArrI32) Name() string {
 	return "TAG_Int_Array"
 }
 
+// long list
 type NbtArrI64 struct {
 	Value []int64
 }
