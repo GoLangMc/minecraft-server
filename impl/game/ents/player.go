@@ -18,6 +18,8 @@ type player struct {
 	online bool
 
 	conn impl_base.Connection
+
+	mode game.GameMode
 }
 
 func NewPlayer(prof *game.Profile, conn impl_base.Connection) ents.Player {
@@ -41,6 +43,14 @@ func (p *player) SendMessage(message ...interface{}) {
 	}
 
 	p.conn.SendPacket(&packet)
+}
+
+func (p *player) GetGameMode() game.GameMode {
+	return p.mode
+}
+
+func (p *player) SetGameMode(mode game.GameMode) {
+	p.mode = mode
 }
 
 func (p *player) GetIsOnline() bool {
