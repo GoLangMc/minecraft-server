@@ -8,6 +8,7 @@ import (
 
 	"minecraft-server/apis/data"
 	"minecraft-server/apis/data/tags"
+	"minecraft-server/apis/uuid"
 	"minecraft-server/impl/base"
 )
 
@@ -135,6 +136,12 @@ func (b *buffer) PullSAS() []int8 {
 	return asSArray(b.PullUAS())
 }
 
+func (b *buffer) PullUID() uuid.UUID {
+	data, _ := uuid.BitsToUUID(b.PullI64(), b.PullI64())
+
+	return data
+}
+
 func (b *buffer) PullPos() data.PositionI {
 	val := b.PullU64()
 
@@ -248,6 +255,13 @@ func (b *buffer) PushUAS(data []byte, prefixWithLen bool) {
 
 func (b *buffer) PushSAS(data []int8, prefixWithLen bool) {
 	b.PushUAS(asUArray(data), prefixWithLen)
+}
+
+func (b *buffer) PushUID(data uuid.UUID) {
+	msb, lsb := uuid.SigBits(data)
+
+	b.PushI64(msb)
+	b.PushI64(lsb)
 }
 
 func (b *buffer) PushPos(data data.PositionI) {

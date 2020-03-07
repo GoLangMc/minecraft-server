@@ -3,6 +3,7 @@ package base
 import (
 	"minecraft-server/apis/data"
 	"minecraft-server/apis/data/tags"
+	"minecraft-server/apis/uuid"
 )
 
 type Buffer interface {
@@ -51,6 +52,8 @@ type Buffer interface {
 
 	PullSAS() []int8
 
+	PullUID() uuid.UUID
+
 	PullPos() data.PositionI
 
 	PullNbt() tags.Nbt
@@ -79,6 +82,8 @@ type Buffer interface {
 	PushUAS(data []byte, prefixWithLen bool)
 
 	PushSAS(data []int8, prefixWithLen bool)
+
+	PushUID(data uuid.UUID)
 
 	PushPos(data data.PositionI)
 
