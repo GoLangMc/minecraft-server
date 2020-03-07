@@ -134,6 +134,13 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 				},
 				Relative: client.Relativity{},
 			})
+
+			conn.SendPacket(&states.PacketOPlayerInfo{
+				Action: client.AddPlayer,
+				Values: []client.PlayerInfo{
+					&client.PlayerInfoAddPlayer{Player: conn.Player},
+				},
+			})
 		}
 	}()
 
