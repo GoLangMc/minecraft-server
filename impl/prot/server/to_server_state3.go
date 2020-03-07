@@ -1,4 +1,4 @@
-package states
+package server
 
 import (
 	"minecraft-server/apis/data"

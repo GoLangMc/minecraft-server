@@ -12,7 +12,8 @@ import (
 	"minecraft-server/impl/base"
 	"minecraft-server/impl/game/auth"
 	"minecraft-server/impl/game/ents"
-	"minecraft-server/impl/prot/states"
+	"minecraft-server/impl/prot/client"
+	"minecraft-server/impl/prot/server"
 )
 
 /**
@@ -21,12 +22,12 @@ import (
 
 func HandleState2(watcher util.Watcher, join chan base.PlayerAndConnection) {
 
-	watcher.SubAs(func(packet *states.PacketILoginStart, conn base.Connection) {
+	watcher.SubAs(func(packet *server.PacketILoginStart, conn base.Connection) {
 		conn.CertifyValues(packet.PlayerName)
 
 		_, public := auth.NewCrypt()
 
-		response := states.PacketOEncryptionRequest{
+		response := client.PacketOEncryptionRequest{
 			Server: "",
 			Public: public,
 			Verify: conn.CertifyData(),
@@ -35,10 +36,10 @@ func HandleState2(watcher util.Watcher, join chan base.PlayerAndConnection) {
 		conn.SendPacket(&response)
 	})
 
-	watcher.SubAs(func(packet *states.PacketIEncryptionResponse, conn base.Connection) {
+	watcher.SubAs(func(packet *server.PacketIEncryptionResponse, conn base.Connection) {
 		defer func() {
 			if err := recover(); err != nil {
-				conn.SendPacket(&states.PacketODisconnect{
+				conn.SendPacket(&client.PacketODisconnect{
 					Reason: *msgs.New(fmt.Sprintf("Authentication failed: %v", err)).SetColor(chat.Red),
 				})
 			}
@@ -63,7 +64,7 @@ func HandleState2(watcher util.Watcher, join chan base.PlayerAndConnection) {
 		auth.RunAuthGet(sec, conn.CertifyName(), func(auth *auth.Auth, err error) {
 			defer func() {
 				if err := recover(); err != nil {
-					conn.SendPacket(&states.PacketODisconnect{
+					conn.SendPacket(&client.PacketODisconnect{
 						Reason: *msgs.New(fmt.Sprintf("Authentication failed: %v", err)).SetColor(chat.Red),
 					})
 				}
@@ -93,7 +94,7 @@ func HandleState2(watcher util.Watcher, join chan base.PlayerAndConnection) {
 
 			player := ents.NewPlayer(&prof, conn)
 
-			conn.SendPacket(&states.PacketOLoginSuccess{
+			conn.SendPacket(&client.PacketOLoginSuccess{
 				PlayerName: player.Name(),
 				PlayerUUID: player.UUID().String(),
 			})

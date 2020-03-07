@@ -16,9 +16,11 @@ import (
 	"minecraft-server/impl/data/client"
 	"minecraft-server/impl/data/plugin"
 	"minecraft-server/impl/data/values"
-	"minecraft-server/impl/prot/states"
 
 	impl_event "minecraft-server/impl/game/event"
+
+	client_packet "minecraft-server/impl/prot/client"
+	server_packet "minecraft-server/impl/prot/server"
 )
 
 func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Tasking, join chan base.PlayerAndConnection, quit chan base.PlayerAndConnection) {
@@ -34,15 +36,15 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 			conn := api.ConnByUUID(player.UUID())
 
 			// keep player connection alive via keep alive
-			conn.SendPacket(&states.PacketOKeepAlive{KeepAliveID: time.Now().UnixNano() / 1e6})
+			conn.SendPacket(&client_packet.PacketOKeepAlive{KeepAliveID: time.Now().UnixNano() / 1e6})
 		}
 	})
 
-	watcher.SubAs(func(packet *states.PacketIKeepAlive, conn base.Connection) {
+	watcher.SubAs(func(packet *server_packet.PacketIKeepAlive, conn base.Connection) {
 		logger.DataF("player %s is being kept alive", conn.Address())
 	})
 
-	watcher.SubAs(func(packet *states.PacketIPluginMessage, conn base.Connection) {
+	watcher.SubAs(func(packet *server_packet.PacketIPluginMessage, conn base.Connection) {
 		api := apis.MinecraftServer()
 
 		player := api.PlayerByConn(conn)
@@ -60,7 +62,7 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 		})
 	})
 
-	watcher.SubAs(func(packet *states.PacketIChatMessage, conn base.Connection) {
+	watcher.SubAs(func(packet *server_packet.PacketIChatMessage, conn base.Connection) {
 		api := apis.MinecraftServer()
 
 		who := api.PlayerByConn(conn)
@@ -78,7 +80,7 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 		for conn := range join {
 			apis.MinecraftServer().Watcher().PubAs(impl_event.PlayerConnJoinEvent{Conn: conn})
 
-			conn.SendPacket(&states.PacketOJoinGame{
+			conn.SendPacket(&client_packet.PacketOJoinGame{
 				EntityID:      int32(conn.EntityUUID()),
 				Hardcore:      false,
 				GameMode:      game.CREATIVE,
@@ -91,18 +93,18 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 				RespawnScreen: false,
 			})
 
-			conn.SendPacket(&states.PacketOPluginMessage{
+			conn.SendPacket(&client_packet.PacketOPluginMessage{
 				Message: &plugin.Brand{
 					Name: chat.Translate(fmt.Sprintf("&b%s&r &a%s&r", "GoLangMc", apis.MinecraftServer().ServerVersion())),
 				},
 			})
 
-			conn.SendPacket(&states.PacketOServerDifficulty{
+			conn.SendPacket(&client_packet.PacketOServerDifficulty{
 				Difficulty: game.PEACEFUL,
 				Locked:     true,
 			})
 
-			conn.SendPacket(&states.PacketOPlayerAbilities{
+			conn.SendPacket(&client_packet.PacketOPlayerAbilities{
 				Abilities: client.PlayerAbilities{
 					Invulnerable: true,
 					Flying:       true,
@@ -113,13 +115,13 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 				FieldOfView: 0.1,  // default value
 			})
 
-			conn.SendPacket(&states.PacketOHeldItemChange{
+			conn.SendPacket(&client_packet.PacketOHeldItemChange{
 				Slot: client.SLOT_0,
 			})
 
-			conn.SendPacket(&states.PacketODeclareRecipes{})
+			conn.SendPacket(&client_packet.PacketODeclareRecipes{})
 
-			conn.SendPacket(&states.PacketOPlayerLocation{
+			conn.SendPacket(&client_packet.PacketOPlayerLocation{
 				ID: 0,
 				Location: data.Location{
 					PositionF: data.PositionF{
@@ -135,7 +137,7 @@ func HandleState3(watcher util.Watcher, logger *logs.Logging, tasking *task.Task
 				Relative: client.Relativity{},
 			})
 
-			conn.SendPacket(&states.PacketOPlayerInfo{
+			conn.SendPacket(&client_packet.PacketOPlayerInfo{
 				Action: client.AddPlayer,
 				Values: []client.PlayerInfo{
 					&client.PlayerInfoAddPlayer{Player: conn.Player},

@@ -6,7 +6,7 @@ import (
 	"minecraft-server/apis/util"
 	"minecraft-server/impl/base"
 	"minecraft-server/impl/game/mode"
-	"minecraft-server/impl/prot/states"
+	"minecraft-server/impl/prot/server"
 )
 
 type packets struct {
@@ -48,64 +48,64 @@ func createPacketI() map[base.PacketState]map[int32]func() base.PacketI {
 	return map[base.PacketState]map[int32]func() base.PacketI{
 		base.SHAKE: {
 			0x00: func() base.PacketI {
-				return &states.PacketIHandshake{}
+				return &server.PacketIHandshake{}
 			},
 		},
 		base.STATUS: {
 			0x00: func() base.PacketI {
-				return &states.PacketIRequest{}
+				return &server.PacketIRequest{}
 			},
 			0x01: func() base.PacketI {
-				return &states.PacketIPing{}
+				return &server.PacketIPing{}
 			},
 		},
 		base.LOGIN: {
 			0x00: func() base.PacketI {
-				return &states.PacketILoginStart{}
+				return &server.PacketILoginStart{}
 			},
 			0x01: func() base.PacketI {
-				return &states.PacketIEncryptionResponse{}
+				return &server.PacketIEncryptionResponse{}
 			},
 			0x02: func() base.PacketI {
-				return &states.PacketILoginPluginResponse{}
+				return &server.PacketILoginPluginResponse{}
 			},
 		},
 		base.PLAY: {
 			0x00: func() base.PacketI {
-				return &states.PacketITeleportConfirm{}
+				return &server.PacketITeleportConfirm{}
 			},
 			0x01: func() base.PacketI {
-				return &states.PacketIQueryBlockNBT{}
+				return &server.PacketIQueryBlockNBT{}
 			},
 			0x02: func() base.PacketI {
-				return &states.PacketISetDifficulty{}
+				return &server.PacketISetDifficulty{}
 			},
 			0x03: func() base.PacketI {
-				return &states.PacketIChatMessage{}
+				return &server.PacketIChatMessage{}
 			},
 			0x04: func() base.PacketI {
-				return &states.PacketIClientStatus{}
+				return &server.PacketIClientStatus{}
 			},
 			0x05: func() base.PacketI {
-				return &states.PacketIClientSettings{}
+				return &server.PacketIClientSettings{}
 			},
 			0x0B: func() base.PacketI {
-				return &states.PacketIPluginMessage{}
+				return &server.PacketIPluginMessage{}
 			},
 			0x0F: func() base.PacketI {
-				return &states.PacketIKeepAlive{}
+				return &server.PacketIKeepAlive{}
 			},
 			0x11: func() base.PacketI {
-				return &states.PacketIPlayerPosition{}
+				return &server.PacketIPlayerPosition{}
 			},
 			0x12: func() base.PacketI {
-				return &states.PacketIPlayerLocation{}
+				return &server.PacketIPlayerLocation{}
 			},
 			0x13: func() base.PacketI {
-				return &states.PacketIPlayerRotation{}
+				return &server.PacketIPlayerRotation{}
 			},
 			0x19: func() base.PacketI {
-				return &states.PacketIPlayerAbilities{}
+				return &server.PacketIPlayerAbilities{}
 			},
 		},
 	}

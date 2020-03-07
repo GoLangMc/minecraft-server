@@ -1,4 +1,4 @@
-package states
+package client
 
 import (
 	"encoding/json"

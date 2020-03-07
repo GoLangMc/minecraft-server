@@ -1,4 +1,4 @@
-package states
+package client
 
 import (
 	"minecraft-server/apis/data/msgs"
