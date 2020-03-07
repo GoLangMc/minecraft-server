@@ -35,7 +35,7 @@ func (n *NbtEnd) Name() string {
 }
 
 type NbtByt struct {
-	value int8
+	Value int8
 }
 
 func (n *NbtByt) Type() Typ {
@@ -47,7 +47,7 @@ func (n *NbtByt) Name() string {
 }
 
 type NbtI16 struct {
-	value int16
+	Value int16
 }
 
 func (n *NbtI16) Type() Typ {
@@ -59,7 +59,7 @@ func (n *NbtI16) Name() string {
 }
 
 type NbtI32 struct {
-	value int32
+	Value int32
 }
 
 func (n *NbtI32) Type() Typ {
@@ -71,7 +71,7 @@ func (n *NbtI32) Name() string {
 }
 
 type NbtI64 struct {
-	value int64
+	Value int64
 }
 
 func (n *NbtI64) Type() Typ {
@@ -83,7 +83,7 @@ func (n *NbtI64) Name() string {
 }
 
 type NbtF32 struct {
-	value float32
+	Value float32
 }
 
 func (n *NbtF32) Type() Typ {
@@ -95,7 +95,7 @@ func (n *NbtF32) Name() string {
 }
 
 type NbtF64 struct {
-	value float64
+	Value float64
 }
 
 func (n *NbtF64) Type() Typ {
@@ -107,7 +107,7 @@ func (n *NbtF64) Name() string {
 }
 
 type NbtArrByt struct {
-	value []int8
+	Value []int8
 }
 
 func (n *NbtArrByt) Type() Typ {
@@ -119,7 +119,7 @@ func (n *NbtArrByt) Name() string {
 }
 
 type NbtTxt struct {
-	value string
+	Value string
 }
 
 func (n *NbtTxt) Type() Typ {
@@ -131,8 +131,8 @@ func (n *NbtTxt) Name() string {
 }
 
 type NbtArrAny struct {
-	nType Typ
-	value []Nbt
+	NType Typ
+	Value []Nbt
 }
 
 func (n *NbtArrAny) Type() Typ {
@@ -144,8 +144,8 @@ func (n *NbtArrAny) Name() string {
 }
 
 type NbtCompound struct {
-	named string
-	value map[string]Nbt
+	Named string
+	Value map[string]Nbt
 }
 
 func (n *NbtCompound) Type() Typ {
@@ -157,7 +157,7 @@ func (n *NbtCompound) Name() string {
 }
 
 type NbtArrI32 struct {
-	value []int32
+	Value []int32
 }
 
 func (n *NbtArrI32) Type() Typ {
@@ -169,7 +169,7 @@ func (n *NbtArrI32) Name() string {
 }
 
 type NbtArrI64 struct {
-	value []int64
+	Value []int64
 }
 
 func (n *NbtArrI64) Type() Typ {
