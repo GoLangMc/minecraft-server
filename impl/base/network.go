@@ -1,7 +1,7 @@
 package base
 
 import (
-	"minecraft-server/apis/base"
+	"github.com/golangmc/minecraft-server/apis/base"
 )
 
 type Network interface {

@@ -6,10 +6,10 @@ import (
 	"reflect"
 	"strconv"
 
-	"minecraft-server/apis/buff"
-	"minecraft-server/apis/logs"
-	"minecraft-server/impl/base"
-	"minecraft-server/impl/data/system"
+	"github.com/golangmc/minecraft-server/apis/buff"
+	"github.com/golangmc/minecraft-server/apis/logs"
+	"github.com/golangmc/minecraft-server/impl/base"
+	"github.com/golangmc/minecraft-server/impl/data/system"
 )
 
 type network struct {

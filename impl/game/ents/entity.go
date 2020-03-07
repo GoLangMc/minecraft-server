@@ -1,6 +1,6 @@
 package ents
 
-import "minecraft-server/apis/uuid"
+import "github.com/golangmc/minecraft-server/apis/uuid"
 
 var entityCounter = int64(0)
 

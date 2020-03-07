@@ -5,9 +5,9 @@ import (
 	"io"
 	"os"
 
-	"minecraft-server/apis/base"
-	"minecraft-server/apis/logs"
-	"minecraft-server/impl/data/system"
+	"github.com/golangmc/minecraft-server/apis/base"
+	"github.com/golangmc/minecraft-server/apis/logs"
+	"github.com/golangmc/minecraft-server/impl/data/system"
 )
 
 type Console struct {

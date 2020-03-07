@@ -1,12 +1,12 @@
 package server
 
 import (
-	"minecraft-server/apis/buff"
-	"minecraft-server/apis/data"
-	"minecraft-server/apis/game"
-	"minecraft-server/impl/base"
-	"minecraft-server/impl/data/client"
-	"minecraft-server/impl/data/plugin"
+	"github.com/golangmc/minecraft-server/apis/buff"
+	"github.com/golangmc/minecraft-server/apis/data"
+	"github.com/golangmc/minecraft-server/apis/game"
+	"github.com/golangmc/minecraft-server/impl/base"
+	"github.com/golangmc/minecraft-server/impl/data/client"
+	"github.com/golangmc/minecraft-server/impl/data/plugin"
 )
 
 type PacketIKeepAlive struct {

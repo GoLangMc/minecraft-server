@@ -1,8 +1,8 @@
 package client
 
 import (
-	"minecraft-server/apis/buff"
-	"minecraft-server/apis/ents"
+	"github.com/golangmc/minecraft-server/apis/buff"
+	"github.com/golangmc/minecraft-server/apis/ents"
 )
 
 type PlayerInfoAction int32

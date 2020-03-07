@@ -1,8 +1,8 @@
 package level
 
 import (
-	"minecraft-server/apis/buff"
-	"minecraft-server/apis/data/tags"
+	"github.com/golangmc/minecraft-server/apis/buff"
+	"github.com/golangmc/minecraft-server/apis/data/tags"
 )
 
 type Chunk interface {

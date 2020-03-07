@@ -3,9 +3,9 @@ package client
 import (
 	"encoding/json"
 
-	"minecraft-server/apis/buff"
-	"minecraft-server/impl/base"
-	"minecraft-server/impl/data/status"
+	"github.com/golangmc/minecraft-server/apis/buff"
+	"github.com/golangmc/minecraft-server/impl/base"
+	"github.com/golangmc/minecraft-server/impl/data/status"
 )
 
 // done

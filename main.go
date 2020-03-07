@@ -5,8 +5,8 @@ import (
 
 	"github.com/fatih/color"
 
-	"minecraft-server/impl"
-	"minecraft-server/impl/conf"
+	"github.com/golangmc/minecraft-server/impl"
+	"github.com/golangmc/minecraft-server/impl/conf"
 )
 
 func main() {

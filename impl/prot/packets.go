@@ -1,12 +1,12 @@
 package prot
 
 import (
-	"minecraft-server/apis/logs"
-	"minecraft-server/apis/task"
-	"minecraft-server/apis/util"
-	"minecraft-server/impl/base"
-	"minecraft-server/impl/game/mode"
-	"minecraft-server/impl/prot/server"
+	"github.com/golangmc/minecraft-server/apis/logs"
+	"github.com/golangmc/minecraft-server/apis/task"
+	"github.com/golangmc/minecraft-server/apis/util"
+	"github.com/golangmc/minecraft-server/impl/base"
+	"github.com/golangmc/minecraft-server/impl/game/mode"
+	"github.com/golangmc/minecraft-server/impl/prot/server"
 )
 
 type packets struct {

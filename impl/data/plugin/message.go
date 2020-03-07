@@ -1,8 +1,8 @@
 package plugin
 
 import (
-	"minecraft-server/apis/buff"
-	"minecraft-server/apis/data"
+	"github.com/golangmc/minecraft-server/apis/buff"
+	"github.com/golangmc/minecraft-server/apis/data"
 )
 
 type Message interface {

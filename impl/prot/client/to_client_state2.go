@@ -1,9 +1,9 @@
 package client
 
 import (
-	"minecraft-server/apis/buff"
-	"minecraft-server/apis/data/msgs"
-	"minecraft-server/impl/base"
+	"github.com/golangmc/minecraft-server/apis/buff"
+	"github.com/golangmc/minecraft-server/apis/data/msgs"
+	"github.com/golangmc/minecraft-server/impl/base"
 )
 
 // done

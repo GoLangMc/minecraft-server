@@ -1,8 +1,8 @@
 package level
 
 import (
-	apis_level "minecraft-server/apis/game/level"
-	"minecraft-server/apis/uuid"
+	apis_level "github.com/golangmc/minecraft-server/apis/game/level"
+	"github.com/golangmc/minecraft-server/apis/uuid"
 )
 
 type level struct {

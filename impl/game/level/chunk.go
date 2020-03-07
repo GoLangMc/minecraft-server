@@ -1,10 +1,10 @@
 package level
 
 import (
-	"minecraft-server/apis/buff"
-	"minecraft-server/apis/data/tags"
-	apis_level "minecraft-server/apis/game/level"
-	"minecraft-server/impl/base"
+	"github.com/golangmc/minecraft-server/apis/buff"
+	"github.com/golangmc/minecraft-server/apis/data/tags"
+	apis_level "github.com/golangmc/minecraft-server/apis/game/level"
+	"github.com/golangmc/minecraft-server/impl/base"
 )
 
 type chunk struct {

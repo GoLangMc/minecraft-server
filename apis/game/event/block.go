@@ -1,7 +1,7 @@
 package event
 
 import (
-	"minecraft-server/apis/game/level"
+	"github.com/golangmc/minecraft-server/apis/game/level"
 )
 
 type BlockEvent struct {

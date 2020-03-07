@@ -1,9 +1,9 @@
 package mode
 
 import (
-	"minecraft-server/apis/util"
-	"minecraft-server/impl/base"
-	"minecraft-server/impl/prot/server"
+	"github.com/golangmc/minecraft-server/apis/util"
+	"github.com/golangmc/minecraft-server/impl/base"
+	"github.com/golangmc/minecraft-server/impl/prot/server"
 )
 
 /**

@@ -1,7 +1,7 @@
 package ents
 
 import (
-	"minecraft-server/apis/base"
+	"github.com/golangmc/minecraft-server/apis/base"
 )
 
 type Sender interface {

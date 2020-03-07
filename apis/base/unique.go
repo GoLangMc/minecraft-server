@@ -1,6 +1,6 @@
 package base
 
-import "minecraft-server/apis/uuid"
+import "github.com/golangmc/minecraft-server/apis/uuid"
 
 type Unique interface {
 	UUID() uuid.UUID

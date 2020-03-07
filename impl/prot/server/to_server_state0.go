@@ -1,8 +1,8 @@
 package server
 
 import (
-	"minecraft-server/apis/buff"
-	"minecraft-server/impl/base"
+	"github.com/golangmc/minecraft-server/apis/buff"
+	"github.com/golangmc/minecraft-server/impl/base"
 )
 
 // done

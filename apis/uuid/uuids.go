@@ -9,10 +9,10 @@ import (
 type UUID = uuid.UUID
 
 func NewUUID() UUID {
-	gen, err := uuid.NewV4()
-	if err != nil {
+	gen := uuid.NewV4()
+	/*if err != nil {
 		panic(err)
-	}
+	}*/
 
 	return gen
 }
