@@ -51,6 +51,10 @@ func (p *player) SetIsOnline(state bool) {
 	p.online = state
 }
 
+func (p *player) GetProfile() *game.Profile {
+	return p.prof
+}
+
 func (p *player) SetConn(conn impl_base.Connection) {
 	p.conn = conn
 }
