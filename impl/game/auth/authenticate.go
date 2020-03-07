@@ -18,9 +18,9 @@ type Auth struct {
 }
 
 type Prop struct {
-	Name string `json:"name"`
-	Data string `json:"value"`
-	Sign string `json:"signature"`
+	Name string  `json:"name"`
+	Data string  `json:"value"`
+	Sign *string `json:"signature"`
 }
 
 func RunAuthGet(secret []byte, name string, callback func(auth *Auth, err error)) {
