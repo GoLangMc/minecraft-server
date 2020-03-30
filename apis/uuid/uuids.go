@@ -3,7 +3,7 @@ package uuid
 import (
 	"encoding/binary"
 
-	"github.com/satori/go.uuid"
+	uuid "github.com/satori/go.uuid"
 )
 
 type UUID = uuid.UUID
@@ -17,8 +17,8 @@ func NewUUID() UUID {
 	return gen
 }
 
-func TextToUUID(text string) (data UUID, err error) {
-	return uuid.FromString(text)
+func TextToUUID(text string) (data UUID) {
+	return uuid.FromStringOrNil(text)
 }
 
 func BitsToUUID(msb, lsb int64) (data UUID, err error) {

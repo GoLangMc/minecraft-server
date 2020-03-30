@@ -25,6 +25,10 @@ func mergeWithFlags(c conf.ServerConfig) conf.ServerConfig {
 		conf.DefaultServerConfig.Network.Port,
 		"the port this server will bind to")
 
+	offline := flag.Bool("offline",
+		conf.DefaultServerConfig.Offline,
+		"do not authenticate against Mojang's session server")
+
 	flag.Parse()
 
 	if *host != conf.DefaultServerConfig.Network.Host {
@@ -33,6 +37,10 @@ func mergeWithFlags(c conf.ServerConfig) conf.ServerConfig {
 
 	if *port != conf.DefaultServerConfig.Network.Port {
 		c.Network.Port = *port
+	}
+
+	if *offline != conf.DefaultServerConfig.Offline {
+		c.Offline = *offline
 	}
 
 	return c

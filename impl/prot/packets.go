@@ -19,7 +19,7 @@ type packets struct {
 	quit chan base.PlayerAndConnection
 }
 
-func NewPackets(tasking *task.Tasking, join chan base.PlayerAndConnection, quit chan base.PlayerAndConnection) base.Packets {
+func NewPackets(tasking *task.Tasking, join chan base.PlayerAndConnection, quit chan base.PlayerAndConnection, offline bool) base.Packets {
 	packets := &packets{
 		Watcher: util.NewWatcher(),
 
@@ -29,7 +29,7 @@ func NewPackets(tasking *task.Tasking, join chan base.PlayerAndConnection, quit 
 
 	mode.HandleState0(packets)
 	mode.HandleState1(packets)
-	mode.HandleState2(packets, join)
+	mode.HandleState2(packets, join, offline)
 	mode.HandleState3(packets, packets.logger, tasking, join, quit)
 
 	return packets

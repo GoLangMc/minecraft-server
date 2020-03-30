@@ -20,20 +20,25 @@ import (
  * login
  */
 
-func HandleState2(watcher util.Watcher, join chan base.PlayerAndConnection) {
+func HandleState2(watcher util.Watcher, join chan base.PlayerAndConnection, offline bool) {
 
 	watcher.SubAs(func(packet *server.PacketILoginStart, conn base.Connection) {
 		conn.CertifyValues(packet.PlayerName)
 
 		_, public := auth.NewCrypt()
 
-		response := client.PacketOEncryptionRequest{
+		if offline {
+			addNewPlayer(conn, join, &auth.Auth{
+				Name: conn.CertifyName(),
+			})
+			return
+		}
+
+		conn.SendPacket(&client.PacketOEncryptionRequest{
 			Server: "",
 			Public: public,
 			Verify: conn.CertifyData(),
-		}
-
-		conn.SendPacket(&response)
+		})
 	})
 
 	watcher.SubAs(func(packet *server.PacketIEncryptionResponse, conn base.Connection) {
@@ -74,39 +79,42 @@ func HandleState2(watcher util.Watcher, join chan base.PlayerAndConnection) {
 				panic(fmt.Errorf("failed to authenticate: %s\n%v\n", conn.CertifyName(), err))
 			}
 
-			uuid, err := uuid.TextToUUID(auth.UUID)
-			if err != nil {
-				panic(fmt.Errorf("failed to decode uuid for %s: %s\n%v\n", conn.CertifyName(), auth.UUID, err))
-			}
-
-			prof := game.Profile{
-				UUID: uuid,
-				Name: auth.Name,
-			}
-
-			for _, prop := range auth.Prop {
-				prof.Properties = append(prof.Properties, &game.ProfileProperty{
-					Name:      prop.Name,
-					Value:     prop.Data,
-					Signature: prop.Sign,
-				})
-			}
-
-			player := ents.NewPlayer(&prof, conn)
-
-			conn.SendPacket(&client.PacketOLoginSuccess{
-				PlayerName: player.Name(),
-				PlayerUUID: player.UUID().String(),
-			})
-
-			conn.SetState(base.PLAY)
-
-			join <- base.PlayerAndConnection{
-				Player:     player,
-				Connection: conn,
-			}
+			addNewPlayer(conn, join, auth)
 		})
 
 	})
 
+}
+
+// addNewPlayer
+// 1. reads an authentication response
+// 2. sends a Login Success packet to the client
+// 3. adds the resultant player to our game
+func addNewPlayer(conn base.Connection, join chan base.PlayerAndConnection, auth *auth.Auth) {
+	prof := game.Profile{
+		UUID: uuid.TextToUUID(auth.UUID),
+		Name: auth.Name,
+	}
+
+	for _, prop := range auth.Prop {
+		prof.Properties = append(prof.Properties, &game.ProfileProperty{
+			Name:      prop.Name,
+			Value:     prop.Data,
+			Signature: prop.Sign,
+		})
+	}
+
+	player := ents.NewPlayer(&prof, conn)
+
+	conn.SendPacket(&client.PacketOLoginSuccess{
+		PlayerName: player.Name(),
+		PlayerUUID: player.UUID().String(),
+	})
+
+	conn.SetState(base.PLAY)
+
+	join <- base.PlayerAndConnection{
+		Player:     player,
+		Connection: conn,
+	}
 }
